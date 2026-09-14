@@ -114,6 +114,19 @@ td { border-top: 1px solid #edf1ef; font-size: 11px; padding: 14px 12px; white-s
 .signal-card details { border-top: 1px solid var(--line); font-size: 10px; margin-top: 15px; padding-top: 12px; }.signal-card summary { color: var(--dark-green); cursor: pointer; font-weight: 700; }.signal-card ul { color: var(--muted); line-height: 1.6; margin: 9px 0 0; padding-left: 16px; }
 .side-column { display: grid; gap: 19px; }
 .more-button { font-size: 10px; }
+.news-controls { align-items: center; border-bottom: 1px solid var(--line); display: flex; gap: 8px; padding: 0 25px 18px; }
+.news-controls .search-box { flex: 1; }
+.news-range { color: var(--muted); font: 10px "DM Mono", monospace; margin: 0; padding: 16px 25px 0; }
+.news-list-page { margin: 0 auto; max-width: 980px; padding: 40px 20px; }
+.news-browser .panel-heading h1 { font-size: clamp(28px, 5vw, 44px); margin: 0 0 10px; }
+.news-browser-intro { color: var(--muted); font-size: 12px; line-height: 1.6; margin: 0; max-width: 520px; }
+.news-results { display: grid; gap: 0; margin-top: 12px; }
+.news-result { border-top: 1px solid var(--line); display: block; padding: 20px 25px; transition: background .15s ease; }
+.news-result:hover, .news-result:focus-visible { background: var(--soft-blue); outline: none; }
+.news-result h2 { font-size: 16px; line-height: 1.4; margin: 8px 0; }
+.news-result p { color: var(--muted); font-size: 11px; line-height: 1.6; margin: 0 0 8px; }
+.news-result small { color: var(--muted); font: 9px "DM Mono", monospace; }
+.news-empty { color: var(--muted); padding: 25px; }
 .news-item { border-top: 1px solid var(--line); padding: 16px 21px 14px; }
 .news-item { color: inherit; cursor: pointer; display: block; text-decoration: none; touch-action: manipulation; transition: background .15s ease; }
 .news-item:hover, .news-item:focus-visible { background: var(--soft-blue); outline: none; }
@@ -135,6 +148,10 @@ td { border-top: 1px solid #edf1ef; font-size: 11px; padding: 14px 12px; white-s
 .dark-mode .back-link, .dark-mode .news-detail-summary { color: #8ed0ff; }
 .dark-mode .news-item:hover, .dark-mode .news-item:focus-visible { background: #101d31; }
 @media (max-width: 600px) {
+  .news-list-page { padding: 22px 14px; }
+  .news-controls { align-items: stretch; flex-direction: column; padding: 0 15px 15px; }
+  .news-range { padding-left: 15px; padding-right: 15px; }
+  .news-result { padding: 18px 15px; }
   .news-detail-page { padding: 22px 14px; }
   .news-detail-card { padding: 22px; }
 }

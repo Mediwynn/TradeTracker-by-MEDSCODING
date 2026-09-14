@@ -111,10 +111,6 @@ document.querySelector("#watchlist-see-all").addEventListener("click", () => {
   render();
   document.querySelector("#officials").scrollIntoView({ behavior: "smooth", block: "start" });
 });
-document.querySelector("#news-see-all").addEventListener("click", () => {
-  document.querySelector("#news").scrollIntoView({ behavior: "smooth", block: "start" });
-  notify("Select a news item to read the full summary.");
-});
 document.querySelector("#theme-toggle").addEventListener("click", () => {
   const dark = document.body.classList.toggle("dark-mode");
   document.querySelector("#theme-toggle").textContent = dark ? "☀" : "☾";
