@@ -114,7 +114,7 @@
                 <p class="eyebrow">DISCLOSURE FEED</p>
                 <h2>Latest trades</h2>
               </div>
-              <span class="record-count" id="record-count">8 records</span>
+              <span class="record-count" id="record-count">20 records</span>
             </div>
             <div class="toolbar">
               <label class="search-box">
@@ -170,7 +170,7 @@
               </div>
             </div>
             <div class="table-footer">
-              <span>Showing <strong id="showing-count">5</strong> of <strong id="total-count">8</strong> loaded disclosures</span>
+              <span>Showing <strong id="showing-count">5</strong> of <strong id="total-count">20</strong> loaded disclosures</span>
               <button class="text-button" id="load-more">Load more <span>→</span></button>
             </div>
           </div>
@@ -182,24 +182,24 @@
                   <p class="eyebrow">CONTEXT</p>
                   <h2>In the news</h2>
                 </div>
-                <button class="more-button">See all →</button>
+                <button class="more-button" id="news-see-all">See all →</button>
               </div>
               <div class="news-list">
-                <article class="news-item">
+                <a class="news-item" href="news.html?id=defense">
                   <span class="news-source">REUTERS · 2H AGO</span>
                   <h3>Defense names rally as committee advances new spending bill</h3>
                   <p>Policy &amp; markets</p>
-                </article>
-                <article class="news-item">
+                </a>
+                <a class="news-item" href="news.html?id=ethics">
                   <span class="news-source">AP NEWS · 5H AGO</span>
                   <h3>Senate ethics office updates financial disclosure guidance</h3>
                   <p>Government</p>
-                </article>
-                <article class="news-item">
+                </a>
+                <a class="news-item" href="news.html?id=chips">
                   <span class="news-source">BLOOMBERG · 1D AGO</span>
                   <h3>Chip stocks lead a week of renewed congressional trading</h3>
                   <p>Markets</p>
-                </article>
+                </a>
               </div>
             </section>
             <section class="panel watchlist-panel">
@@ -208,7 +208,7 @@
                   <p class="eyebrow">YOUR SIGNALS</p>
                   <h2>Watchlist</h2>
                 </div>
-                <button class="more-button">Manage →</button>
+                <button class="more-button" id="watchlist-see-all">See all →</button>
               </div>
               <div class="watchlist-row">
                 <span class="ticker-dot blue">NVDA</span>

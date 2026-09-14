@@ -6,7 +6,18 @@ const trades = [
   { official: "Priya Shah", party: "Democrat", state: "IL", employment: "current", ticker: "AMD", asset: "Advanced Micro Devices", type: "Purchase", range: "$1,001 – $15,000", amount: 8000, transactionDate: "2026-09-09", disclosureDate: "Sep 12, 2026", status: "Verified", initials: "PS" },
   { official: "Robert Hayes", party: "Republican", state: "FL", employment: "former", ticker: "JPM", asset: "JPMorgan Chase", type: "Purchase", range: "$50,001 – $100,000", amount: 75000, transactionDate: "2026-09-08", disclosureDate: "Sep 11, 2026", status: "Verified", initials: "RH" },
   { official: "Alicia Brooks", party: "Democrat", state: "MA", employment: "current", ticker: "GOOGL", asset: "Alphabet Inc.", type: "Sale", range: "$1,001 – $15,000", amount: 8000, transactionDate: "2026-09-08", disclosureDate: "Sep 10, 2026", status: "Verified", initials: "AB" },
-  { official: "Daniel Kim", party: "Republican", state: "GA", employment: "current", ticker: "RTX", asset: "RTX Corporation", type: "Purchase", range: "$15,001 – $50,000", amount: 32500, transactionDate: "2026-09-07", disclosureDate: "Sep 10, 2026", status: "Under review", initials: "DK" }
+  { official: "Daniel Kim", party: "Republican", state: "GA", employment: "current", ticker: "RTX", asset: "RTX Corporation", type: "Purchase", range: "$15,001 – $50,000", amount: 32500, transactionDate: "2026-09-07", disclosureDate: "Sep 10, 2026", status: "Under review", initials: "DK" },
+  { official: "Sofia Patel", party: "Democrat", state: "WA", employment: "current", ticker: "AMZN", asset: "Amazon.com Inc.", type: "Purchase", range: "$1,001 – $15,000", amount: 8000, transactionDate: "2026-09-06", disclosureDate: "Sep 09, 2026", status: "Verified", initials: "SP" },
+  { official: "Marcus Bell", party: "Republican", state: "NC", employment: "former", ticker: "META", asset: "Meta Platforms", type: "Sale", range: "$15,001 – $50,000", amount: 32500, transactionDate: "2026-09-05", disclosureDate: "Sep 08, 2026", status: "Verified", initials: "MB" },
+  { official: "Grace Wilson", party: "Democrat", state: "OR", employment: "current", ticker: "AAPL", asset: "Apple Inc.", type: "Purchase", range: "$50,001 – $100,000", amount: 75000, transactionDate: "2026-09-04", disclosureDate: "Sep 07, 2026", status: "Verified", initials: "GW" },
+  { official: "Victor Ortiz", party: "Republican", state: "AZ", employment: "current", ticker: "CVX", asset: "Chevron Corporation", type: "Sale", range: "$1,001 – $15,000", amount: 8000, transactionDate: "2026-09-03", disclosureDate: "Sep 06, 2026", status: "Under review", initials: "VO" },
+  { official: "Hannah Lee", party: "Democrat", state: "VA", employment: "current", ticker: "TSLA", asset: "Tesla Inc.", type: "Purchase", range: "$15,001 – $50,000", amount: 32500, transactionDate: "2026-09-02", disclosureDate: "Sep 05, 2026", status: "Verified", initials: "HL" },
+  { official: "Andrew Foster", party: "Republican", state: "PA", employment: "former", ticker: "JPM", asset: "JPMorgan Chase", type: "Sale", range: "$50,001 – $100,000", amount: 75000, transactionDate: "2026-09-01", disclosureDate: "Sep 04, 2026", status: "Verified", initials: "AF" },
+  { official: "Nora Green", party: "Democrat", state: "CO", employment: "current", ticker: "CRM", asset: "Salesforce", type: "Purchase", range: "$1,001 – $15,000", amount: 8000, transactionDate: "2026-08-31", disclosureDate: "Sep 03, 2026", status: "Verified", initials: "NG" },
+  { official: "Samuel Price", party: "Republican", state: "MI", employment: "current", ticker: "BA", asset: "Boeing Company", type: "Sale", range: "$15,001 – $50,000", amount: 32500, transactionDate: "2026-08-30", disclosureDate: "Sep 02, 2026", status: "Under review", initials: "SP" },
+  { official: "Leah Turner", party: "Democrat", state: "MN", employment: "former", ticker: "V", asset: "Visa Inc.", type: "Purchase", range: "$50,001 – $100,000", amount: 75000, transactionDate: "2026-08-29", disclosureDate: "Sep 01, 2026", status: "Verified", initials: "LT" },
+  { official: "Caleb Morgan", party: "Republican", state: "TN", employment: "current", ticker: "JNJ", asset: "Johnson & Johnson", type: "Purchase", range: "$1,001 – $15,000", amount: 8000, transactionDate: "2026-08-28", disclosureDate: "Aug 31, 2026", status: "Verified", initials: "CM" },
+  { official: "Isabel Rivera", party: "Democrat", state: "NJ", employment: "current", ticker: "NFLX", asset: "Netflix Inc.", type: "Sale", range: "$15,001 – $50,000", amount: 32500, transactionDate: "2026-08-27", disclosureDate: "Aug 30, 2026", status: "Verified", initials: "IR" }
 ];
 
 const rowContainer = document.querySelector("#trade-rows");
@@ -91,7 +102,19 @@ document.querySelector("#load-more").addEventListener("click", () => {
   visibleCount += 5;
   render();
 });
-document.querySelectorAll(".more-button").forEach((button) => button.addEventListener("click", () => notify("This view is ready for a live news feed connection.")));
+document.querySelector("#watchlist-see-all").addEventListener("click", () => {
+  searchInput.value = "";
+  typeFilter.value = "all";
+  partyFilter.value = "all";
+  employmentFilter.value = "all";
+  visibleCount = 5;
+  render();
+  document.querySelector("#officials").scrollIntoView({ behavior: "smooth", block: "start" });
+});
+document.querySelector("#news-see-all").addEventListener("click", () => {
+  document.querySelector("#news").scrollIntoView({ behavior: "smooth", block: "start" });
+  notify("Select a news item to read the full summary.");
+});
 document.querySelector("#theme-toggle").addEventListener("click", () => {
   const dark = document.body.classList.toggle("dark-mode");
   document.querySelector("#theme-toggle").textContent = dark ? "☀" : "☾";
