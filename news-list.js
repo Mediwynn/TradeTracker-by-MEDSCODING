@@ -15,6 +15,7 @@ const sort = document.querySelector("#news-sort");
 const category = document.querySelector("#news-category-filter");
 const empty = document.querySelector("#news-empty");
 const count = document.querySelector("#news-count");
+const showing = document.querySelector("#news-showing");
 const range = document.querySelector("#news-range");
 const newsPageSize = 5;
 let newsPage = 1;
@@ -49,6 +50,9 @@ function renderNews() {
   `).join("");
   empty.classList.toggle("hidden", filtered.length > 0);
   count.textContent = `${filtered.length} stor${filtered.length === 1 ? "y" : "ies"}`;
+  showing.textContent = filtered.length > 0
+    ? `Showing ${pageItems.length} of ${filtered.length} stor${filtered.length === 1 ? "y" : "ies"}`
+    : "Showing 0 stories";
   document.querySelector("#news-page").textContent = `${newsPage}/${totalPages}`;
   document.querySelector("#news-prev").disabled = newsPage === 1;
   document.querySelector("#news-next").disabled = newsPage === totalPages;
@@ -72,4 +76,15 @@ document.querySelector("#news-next").addEventListener("click", () => {
   newsPage += 1;
   renderNews();
 });
+const themeToggle = document.querySelector("#news-theme-toggle");
+function setTheme(isDark) {
+  document.body.classList.toggle("dark-mode", isDark);
+  document.documentElement.classList.toggle("dark-mode", isDark);
+  themeToggle.textContent = isDark ? "☀" : "☾";
+  themeToggle.setAttribute("aria-label", isDark ? "Switch to light mode" : "Switch to dark mode");
+  themeToggle.setAttribute("title", isDark ? "Switch to light mode" : "Switch to dark mode");
+  localStorage.setItem("public-ledger-theme", isDark ? "dark" : "light");
+}
+themeToggle.addEventListener("click", () => setTheme(!document.body.classList.contains("dark-mode")));
+setTheme(localStorage.getItem("public-ledger-theme") === "dark");
 renderNews();

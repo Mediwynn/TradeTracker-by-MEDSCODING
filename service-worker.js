@@ -7,7 +7,7 @@ const APP_SHELL = [
   "./news.html",
   "./news-detail.js",
   "./news-list.html",
-  "./news-list.js",
+  "./news-list.js?v=4",
   "./manifest.webmanifest",
   "./app-icon.svg"
 ];

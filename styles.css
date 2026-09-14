@@ -117,8 +117,11 @@ td { border-top: 1px solid #edf1ef; font-size: 11px; padding: 14px 12px; white-s
 .news-controls { align-items: center; border-bottom: 1px solid var(--line); display: flex; gap: 8px; padding: 0 25px 18px; }
 .news-controls .search-box { flex: 1; }
 .news-range { color: var(--muted); font: 10px "DM Mono", monospace; margin: 0; padding: 16px 25px 0; }
+.news-showing { color: var(--muted); font: 10px "DM Mono", monospace; margin: 6px 0 0; padding: 0 25px; }
 .news-list-page { margin: 0 auto; max-width: 980px; padding: 40px 20px; }
 .news-browser .panel-heading h1 { font-size: clamp(28px, 5vw, 44px); margin: 0 0 10px; }
+.news-heading-actions { align-items: center; display: flex; gap: 16px; }
+.news-heading-actions .icon-button { color: var(--dark-green); }
 .news-browser-intro { color: var(--muted); font-size: 12px; line-height: 1.6; margin: 0; max-width: 520px; }
 .news-results { display: grid; gap: 0; margin-top: 12px; }
 .news-result { border-top: 1px solid var(--line); display: block; padding: 20px 25px; transition: background .15s ease; }
@@ -135,6 +138,7 @@ td { border-top: 1px solid #edf1ef; font-size: 11px; padding: 14px 12px; white-s
 .page-indicator { color: var(--dark-green); font: 10px "DM Mono", monospace; min-width: 40px; text-align: center; }
 .dark-mode .page-button { background: #0b111b; color: #8ed0ff; }
 .dark-mode .page-indicator { color: #8ed0ff; }
+.dark-mode .news-heading-actions .icon-button { color: #8ed0ff; }
 .news-item { border-top: 1px solid var(--line); padding: 16px 21px 14px; }
 .news-item { color: inherit; cursor: pointer; display: block; text-decoration: none; touch-action: manipulation; transition: background .15s ease; }
 .news-item:hover, .news-item:focus-visible { background: var(--soft-blue); outline: none; }
@@ -159,6 +163,7 @@ td { border-top: 1px solid #edf1ef; font-size: 11px; padding: 14px 12px; white-s
   .news-list-page { padding: 22px 14px; }
   .news-controls { align-items: stretch; flex-direction: column; padding: 0 15px 15px; }
   .news-range { padding-left: 15px; padding-right: 15px; }
+  .news-showing { padding-left: 15px; padding-right: 15px; }
   .news-result { padding: 18px 15px; }
   .news-detail-page { padding: 22px 14px; }
   .news-detail-card { padding: 22px; }
