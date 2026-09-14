@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="TradeTracker by MEDSCODING tracks publicly disclosed government official stock trades and related news." />
+    <title>TradeTracker by MEDSCODING</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="TradeTracker by MEDSCODING home">
+          <span class="brand-mark">TT</span>
+          <span class="brand-name">TradeTracker <em>by MEDSCODING</em></span>
+        </a>
+        <nav class="main-nav" aria-label="Main navigation">
+          <a class="active" href="#dashboard">Dashboard</a>
+          <a href="#officials">Officials</a>
+          <a href="#analytics">Analytics</a>
+          <a href="#signals">Signals</a>
+          <a href="#news">News</a>
+          <a href="#methodology">Methodology</a>
+        </nav>
+        <div class="topbar-actions">
+          <span class="live-status"><i></i> Data refreshed 8 min ago</span>
+          <button class="icon-button" id="theme-toggle" aria-label="Switch to dark mode">☾</button>
+          <div class="avatar">AR</div>
+        </div>
+      </header>
+
+      <main id="dashboard" class="page">
+        <section class="hero">
+          <div>
+            <p class="eyebrow">PUBLIC DISCLOSURES · 14 SEPTEMBER 2026</p>
+            <h1>Follow the paper trail.</h1>
+            <p class="hero-copy">A clearer view of stock trades disclosed by members of Congress and senior government officials.</p>
+          </div>
+          <div class="hero-actions">
+            <button class="secondary-button" id="signals-toggle">View signals</button>
+            <button class="primary-button" id="export-button"><span>↓</span> Export view</button>
+          </div>
+        </section>
+
+        <section class="metric-grid" aria-label="Market activity overview">
+          <article class="metric-card">
+            <div class="metric-label">Trades this week <span class="trend up">↗ 12.4%</span></div>
+            <strong>184</strong>
+            <p>vs. 164 last week</p>
+          </article>
+          <article class="metric-card">
+            <div class="metric-label">Reported volume <span class="trend up">↗ 8.1%</span></div>
+            <strong>$42.8M</strong>
+            <p>Estimated transaction range</p>
+          </article>
+          <article class="metric-card">
+            <div class="metric-label">Most active sector</div>
+            <strong class="sector-value">Technology</strong>
+            <p>38% of reported activity</p>
+          </article>
+          <article class="metric-card accent-card">
+            <div class="metric-label">Latest disclosure</div>
+            <strong>Rep. M. Chen</strong>
+            <p>Filed 2 hours ago · 3 transactions</p>
+          </article>
+        </section>
+
+        <section class="signals-section hidden" id="signals">
+          <div class="panel-heading signals-heading">
+            <div>
+              <p class="eyebrow">DECISION SUPPORT</p>
+              <h2>Evidence-based signals</h2>
+            </div>
+            <span class="record-count">Educational only · not financial advice</span>
+          </div>
+          <div class="signals-intro">Signals summarize public disclosure patterns. They are not predictions of future prices or buy/sell recommendations. Review the source filings, market conditions, and your own risk tolerance before making any decision.</div>
+          <div class="signal-grid">
+            <article class="panel signal-card">
+              <div class="signal-top"><span class="ticker-dot blue">NVDA</span><span class="signal-label positive">Positive pattern</span></div>
+              <h3>NVIDIA Corp.</h3>
+              <div class="signal-score"><strong>72</strong><span>/ 100<br><small>signal strength</small></span></div>
+              <div class="signal-meter"><i style="width:72%"></i></div>
+              <p class="signal-summary">Recent disclosed activity leans toward purchases among tracked officials.</p>
+              <details><summary>Why this signal?</summary><ul><li>2 recent purchases vs. 0 sales in the loaded sample</li><li>Most recent disclosure was filed within 48 hours</li><li>Technology is the most active tracked sector</li></ul></details>
+            </article>
+            <article class="panel signal-card">
+              <div class="signal-top"><span class="ticker-dot orange">LMT</span><span class="signal-label neutral">Mixed evidence</span></div>
+              <h3>Lockheed Martin</h3>
+              <div class="signal-score"><strong>51</strong><span>/ 100<br><small>signal strength</small></span></div>
+              <div class="signal-meter"><i style="width:51%"></i></div>
+              <p class="signal-summary">One recent purchase is notable, but there is not enough history for a strong conclusion.</p>
+              <details><summary>Why this signal?</summary><ul><li>Limited number of tracked disclosures</li><li>Defense-sector news is a contextual factor</li><li>No price or fundamentals data is used here</li></ul></details>
+            </article>
+            <article class="panel signal-card">
+              <div class="signal-top"><span class="ticker-dot purple">MSFT</span><span class="signal-label caution">Caution</span></div>
+              <h3>Microsoft Corp.</h3>
+              <div class="signal-score"><strong>34</strong><span>/ 100<br><small>signal strength</small></span></div>
+              <div class="signal-meter"><i style="width:34%"></i></div>
+              <p class="signal-summary">The latest tracked transaction is a sale and is still under review.</p>
+              <details><summary>Why this signal?</summary><ul><li>Latest event is a reported sale</li><li>Disclosure status has not been fully verified</li><li>A single transaction cannot establish a trend</li></ul></details>
+            </article>
+          </div>
+        </section>
+
+        <section class="content-grid">
+          <div class="panel trade-panel" id="officials">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">DISCLOSURE FEED</p>
+                <h2>Latest trades</h2>
+              </div>
+              <span class="record-count" id="record-count">8 records</span>
+            </div>
+            <div class="toolbar">
+              <label class="search-box">
+                <span>⌕</span>
+                <input id="search-input" type="search" placeholder="Search official, ticker, or asset" />
+              </label>
+              <label class="select-wrap">
+                <span class="sr-only">Filter transaction type</span>
+                <select id="type-filter">
+                  <option value="all">All transactions</option>
+                  <option value="Purchase">Purchases</option>
+                  <option value="Sale">Sales</option>
+                </select>
+              </label>
+              <span class="record-count analytics-mode" id="analytics-mode">Portrait · numbers only</span>
+              <label class="select-wrap">
+                <span class="sr-only">Filter political party</span>
+                <select id="party-filter">
+                  <option value="all">All parties</option>
+                  <option value="Democrat">Democrat</option>
+                  <option value="Republican">Republican</option>
+                </select>
+              </label>
+              <label class="select-wrap">
+                <span class="sr-only">Filter official status</span>
+                <select id="employment-filter">
+                  <option value="all">All officials</option>
+                  <option value="current">Current officials</option>
+                  <option value="former">Former officials</option>
+                </select>
+              </label>
+              <button class="filter-button" id="clear-filters">Clear</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th><button class="sort-button" data-sort="official">Official ↕</button></th>
+                    <th>Asset</th>
+                    <th><button class="sort-button" data-sort="type">Action ↕</button></th>
+                    <th><button class="sort-button" data-sort="amount">Amount ↕</button></th>
+                    <th><button class="sort-button" data-sort="transactionDate">Transaction time ↕</button></th>
+                    <th>Status</th>
+                    <th><span class="sr-only">Source</span></th>
+                  </tr>
+                </thead>
+                <tbody id="trade-rows"></tbody>
+              </table>
+              <div class="empty-state hidden" id="empty-state">
+                <span>⌕</span>
+                <strong>No matching disclosures</strong>
+                <p>Try a different search or clear your filters.</p>
+              </div>
+            </div>
+            <div class="table-footer">
+              <span>Showing <strong id="showing-count">5</strong> of <strong id="total-count">8</strong> loaded disclosures</span>
+              <button class="text-button" id="load-more">Load more <span>→</span></button>
+            </div>
+          </div>
+
+          <aside class="side-column">
+            <section class="panel activity-panel" id="news">
+              <div class="panel-heading compact">
+                <div>
+                  <p class="eyebrow">CONTEXT</p>
+                  <h2>In the news</h2>
+                </div>
+                <button class="more-button">See all →</button>
+              </div>
+              <div class="news-list">
+                <article class="news-item">
+                  <span class="news-source">REUTERS · 2H AGO</span>
+                  <h3>Defense names rally as committee advances new spending bill</h3>
+                  <p>Policy &amp; markets</p>
+                </article>
+                <article class="news-item">
+                  <span class="news-source">AP NEWS · 5H AGO</span>
+                  <h3>Senate ethics office updates financial disclosure guidance</h3>
+                  <p>Government</p>
+                </article>
+                <article class="news-item">
+                  <span class="news-source">BLOOMBERG · 1D AGO</span>
+                  <h3>Chip stocks lead a week of renewed congressional trading</h3>
+                  <p>Markets</p>
+                </article>
+              </div>
+            </section>
+            <section class="panel watchlist-panel">
+              <div class="panel-heading compact">
+                <div>
+                  <p class="eyebrow">YOUR SIGNALS</p>
+                  <h2>Watchlist</h2>
+                </div>
+                <button class="more-button">Manage →</button>
+              </div>
+              <div class="watchlist-row">
+                <span class="ticker-dot blue">NVDA</span>
+                <span><strong>NVIDIA</strong><small>3 new disclosures</small></span>
+                <b class="positive">+4.8%</b>
+              </div>
+              <div class="watchlist-row">
+                <span class="ticker-dot orange">LMT</span>
+                <span><strong>Lockheed Martin</strong><small>1 new disclosure</small></span>
+                <b class="positive">+1.2%</b>
+              </div>
+              <div class="watchlist-row">
+                <span class="ticker-dot purple">MSFT</span>
+                <span><strong>Microsoft</strong><small>No new disclosures</small></span>
+                <b class="negative">−0.6%</b>
+              </div>
+            </section>
+          </aside>
+        </section>
+
+        <section class="analytics-section" id="analytics">
+          <div class="panel-heading analytics-heading">
+            <div>
+              <p class="eyebrow">HISTORICAL VIEW</p>
+              <h2>Trade analytics</h2>
+            </div>
+            <label class="select-wrap">
+              <span class="sr-only">Analytics time range</span>
+              <select id="analytics-range">
+                <option>Last 6 months</option>
+                <option>Last 12 months</option>
+                <option>All available history</option>
+              </select>
+            </label>
+          </div>
+          <div class="portrait-summary" aria-label="Compact analytics summary">
+            <div class="mini-summary-chart">
+              <div class="mini-summary-head"><span>Trend</span><strong>1,284</strong></div>
+              <div class="mini-bars"><i style="height:35%"></i><i style="height:52%"></i><i style="height:43%"></i><i style="height:68%"></i><i style="height:57%"></i><i style="height:82%"></i></div>
+              <div class="mini-axis"><span>Apr</span><span>Sep</span></div>
+            </div>
+            <div class="mini-summary-pie">
+              <div class="mini-pie" aria-label="61 percent purchases, 39 percent sales"><b>61%</b></div>
+              <div class="mini-pie-key"><span><i class="purchase-dot"></i>61%</span><span><i class="sale-dot"></i>39%</span></div>
+            </div>
+          </div>
+          <div class="analytics-grid">
+            <article class="panel chart-card">
+              <div class="chart-title"><span>Disclosures over time</span><strong>1,284</strong><small>total filings</small></div>
+              <div class="bar-chart" aria-label="Monthly disclosure counts">
+                <span tabindex="0" style="height:42%" data-portrait="148" data-tooltip="April · 148 filings|+ Baseline activity|- Fewer observations"></span><span tabindex="0" style="height:57%" data-portrait="201" data-tooltip="May · 201 filings|+ Activity rose 36%|- Reports may be delayed"></span><span tabindex="0" style="height:49%" data-portrait="172" data-tooltip="June · 172 filings|+ Above April|- Volume softened"></span><span tabindex="0" style="height:70%" data-portrait="246" data-tooltip="July · 246 filings|+ Activity rose 43%|- Volume is not performance"></span><span tabindex="0" style="height:62%" data-portrait="218" data-tooltip="August · 218 filings|+ Activity stayed high|- Count is not returns"></span><span tabindex="0" class="current-bar" style="height:82%" data-portrait="299" data-tooltip="September · 299 filings|+ Highest month|- Month in progress"></span>
+              </div>
+              <div class="chart-labels"><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span></div>
+            </article>
+            <article class="panel chart-card">
+              <div class="chart-title"><span>Purchase vs. sale</span><strong>61% <small>purchases</small></strong></div>
+              <div class="donut-wrap"><div class="donut" tabindex="0" data-portrait="61% / 39%" data-tooltip="Buy / sell mix|+ Purchases lead at 61%|- Intent does not predict price"><span>1,284<small>trades</small></span></div><div class="legend"><span tabindex="0" data-portrait="61%" data-tooltip="Purchases · 61%|+ Buying leads|- Ranges are estimates"><i class="purchase-dot"></i>Purchases <b>61%</b></span><span tabindex="0" data-portrait="39%" data-tooltip="Sales · 39%|+ Useful context|- May be rebalancing"><i class="sale-dot"></i>Sales <b>39%</b></span></div></div>
+            </article>
+            <article class="panel chart-card sector-card">
+              <div class="chart-title"><span>Top sectors by volume</span><small>reported ranges</small></div>
+              <div class="sector-row" tabindex="0" data-portrait="38%" data-tooltip="Technology · 38%|+ Leading sector|- Concentration risk"><span>Technology</span><div><i style="width:82%"></i></div><b>38%</b></div>
+              <div class="sector-row" tabindex="0" data-portrait="24%" data-tooltip="Healthcare · 24%|+ Second-largest sector|- Volume is not quality"><span>Healthcare</span><div><i style="width:56%"></i></div><b>24%</b></div>
+              <div class="sector-row" tabindex="0" data-portrait="18%" data-tooltip="Defense · 18%|+ Policy context|- Policy can add volatility"><span>Defense</span><div><i style="width:42%"></i></div><b>18%</b></div>
+              <div class="sector-row" tabindex="0" data-portrait="12%" data-tooltip="Energy · 12%|+ Active participation|- Smallest major sector"><span>Energy</span><div><i style="width:31%"></i></div><b>12%</b></div>
+            </article>
+          </div>
+          <p class="analytics-note">Analytics are calculated from the public disclosures currently loaded into the app. Live history will expand as new filings are ingested.</p>
+        </section>
+
+        <section class="methodology" id="methodology">
+          <span class="method-icon">i</span>
+          <div><strong>How to read this data</strong><p>Records are sourced from official financial disclosures. Amounts are reported in ranges, not exact values. A disclosure does not imply wrongdoing or a recommendation to trade.</p></div>
+          <a href="#">Read our methodology →</a>
+        </section>
+      </main>
+      <footer><span>PUBLIC LEDGER</span><span>Independent · Transparent · Public data</span><span>© 2026 Public Ledger</span></footer>
+    </div>
+    <div class="analytics-tooltip" id="analytics-tooltip" role="status"></div>
+    <div class="toast" id="toast" role="status"></div>
+    <script src="app.js"></script>
+  </body>
+</html>
