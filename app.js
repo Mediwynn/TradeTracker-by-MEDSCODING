@@ -30,7 +30,8 @@ const recordCount = document.querySelector("#record-count");
 const showingCount = document.querySelector("#showing-count");
 let sortDirection = 1;
 let sortKey = "transactionDate";
-let visibleCount = 5;
+const tradePageSize = 10;
+let tradePage = 1;
 
 function render() {
   const query = searchInput.value.trim().toLowerCase();
@@ -44,7 +45,10 @@ function render() {
       const second = sortKey === "amount" ? b.amount : b[sortKey];
       return (first > second ? 1 : first < second ? -1 : 0) * sortDirection;
     });
-  const visibleTrades = filtered.slice(0, visibleCount);
+  const totalPages = Math.max(1, Math.ceil(filtered.length / tradePageSize));
+  tradePage = Math.min(tradePage, totalPages);
+  const start = (tradePage - 1) * tradePageSize;
+  const visibleTrades = filtered.slice(start, start + tradePageSize);
 
   rowContainer.innerHTML = visibleTrades.map((trade) => `
     <tr>
@@ -62,9 +66,9 @@ function render() {
   recordCount.textContent = `${filtered.length} record${filtered.length === 1 ? "" : "s"}`;
   showingCount.textContent = visibleTrades.length;
   document.querySelector("#total-count").textContent = filtered.length;
-  const loadMore = document.querySelector("#load-more");
-  loadMore.disabled = visibleTrades.length >= filtered.length;
-  loadMore.innerHTML = loadMore.disabled ? "All loaded <span>✓</span>" : "Load more <span>→</span>";
+  document.querySelector("#trade-page").textContent = `${tradePage}/${totalPages}`;
+  document.querySelector("#trade-prev").disabled = tradePage === 1;
+  document.querySelector("#trade-next").disabled = tradePage === totalPages;
 }
 
 document.querySelectorAll(".sort-button").forEach((button) => {
@@ -75,13 +79,16 @@ document.querySelectorAll(".sort-button").forEach((button) => {
     render();
   });
 });
-[searchInput, typeFilter, partyFilter, employmentFilter].forEach((control) => control.addEventListener("input", render));
+[searchInput, typeFilter, partyFilter, employmentFilter].forEach((control) => control.addEventListener("input", () => {
+  tradePage = 1;
+  render();
+}));
 document.querySelector("#clear-filters").addEventListener("click", () => {
   searchInput.value = "";
   typeFilter.value = "all";
   partyFilter.value = "all";
   employmentFilter.value = "all";
-  visibleCount = 5;
+  tradePage = 1;
   render();
 });
 
@@ -98,8 +105,12 @@ document.querySelector("#signals-toggle").addEventListener("click", () => {
   document.querySelector("#signals-toggle").textContent = visible ? "Hide signals" : "View signals";
   if (visible) signals.scrollIntoView({ behavior: "smooth", block: "start" });
 });
-document.querySelector("#load-more").addEventListener("click", () => {
-  visibleCount += 5;
+document.querySelector("#trade-prev").addEventListener("click", () => {
+  tradePage -= 1;
+  render();
+});
+document.querySelector("#trade-next").addEventListener("click", () => {
+  tradePage += 1;
   render();
 });
 document.querySelector("#watchlist-see-all").addEventListener("click", () => {
@@ -107,7 +118,7 @@ document.querySelector("#watchlist-see-all").addEventListener("click", () => {
   typeFilter.value = "all";
   partyFilter.value = "all";
   employmentFilter.value = "all";
-  visibleCount = 5;
+  tradePage = 1;
   render();
   document.querySelector("#officials").scrollIntoView({ behavior: "smooth", block: "start" });
 });

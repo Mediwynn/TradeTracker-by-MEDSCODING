@@ -16,6 +16,8 @@ const category = document.querySelector("#news-category-filter");
 const empty = document.querySelector("#news-empty");
 const count = document.querySelector("#news-count");
 const range = document.querySelector("#news-range");
+const newsPageSize = 5;
+let newsPage = 1;
 
 function formatDate(value) {
   return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(new Date(`${value}T12:00:00`));
@@ -34,7 +36,10 @@ function renderNews() {
     return b.relevance - a.relevance || b.date.localeCompare(a.date);
   });
 
-  resultContainer.innerHTML = filtered.map((item) => `
+  const totalPages = Math.max(1, Math.ceil(filtered.length / newsPageSize));
+  newsPage = Math.min(newsPage, totalPages);
+  const pageItems = filtered.slice((newsPage - 1) * newsPageSize, newsPage * newsPageSize);
+  resultContainer.innerHTML = pageItems.map((item) => `
     <a class="news-result" href="news.html?id=${item.id}">
       <span class="news-source">${item.source} · ${formatDate(item.date)}</span>
       <h2>${item.title}</h2>
@@ -44,6 +49,9 @@ function renderNews() {
   `).join("");
   empty.classList.toggle("hidden", filtered.length > 0);
   count.textContent = `${filtered.length} stor${filtered.length === 1 ? "y" : "ies"}`;
+  document.querySelector("#news-page").textContent = `${newsPage}/${totalPages}`;
+  document.querySelector("#news-prev").disabled = newsPage === 1;
+  document.querySelector("#news-next").disabled = newsPage === totalPages;
   if (filtered.length > 0) {
     const dates = filtered.map((item) => item.date).sort();
     range.textContent = `Available news: ${formatDate(dates[0])} – ${formatDate(dates[dates.length - 1])}`;
@@ -52,5 +60,16 @@ function renderNews() {
   }
 }
 
-[search, sort, category].forEach((control) => control.addEventListener("input", renderNews));
+[search, sort, category].forEach((control) => control.addEventListener("input", () => {
+  newsPage = 1;
+  renderNews();
+}));
+document.querySelector("#news-prev").addEventListener("click", () => {
+  newsPage -= 1;
+  renderNews();
+});
+document.querySelector("#news-next").addEventListener("click", () => {
+  newsPage += 1;
+  renderNews();
+});
 renderNews();

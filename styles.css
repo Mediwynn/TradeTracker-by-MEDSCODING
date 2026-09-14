@@ -127,6 +127,14 @@ td { border-top: 1px solid #edf1ef; font-size: 11px; padding: 14px 12px; white-s
 .news-result p { color: var(--muted); font-size: 11px; line-height: 1.6; margin: 0 0 8px; }
 .news-result small { color: var(--muted); font: 9px "DM Mono", monospace; }
 .news-empty { color: var(--muted); padding: 25px; }
+.pagination-controls, .news-pagination { align-items: center; display: flex; gap: 10px; }
+.news-pagination { border-top: 1px solid var(--line); justify-content: center; padding: 16px 25px; }
+.page-button { background: var(--white); border: 1px solid var(--line); border-radius: 4px; color: var(--dark-green); cursor: pointer; font-weight: 700; height: 28px; min-width: 30px; }
+.page-button:hover:not(:disabled) { border-color: var(--dark-green); }
+.page-button:disabled { color: var(--muted); cursor: not-allowed; opacity: .45; }
+.page-indicator { color: var(--dark-green); font: 10px "DM Mono", monospace; min-width: 40px; text-align: center; }
+.dark-mode .page-button { background: #0b111b; color: #8ed0ff; }
+.dark-mode .page-indicator { color: #8ed0ff; }
 .news-item { border-top: 1px solid var(--line); padding: 16px 21px 14px; }
 .news-item { color: inherit; cursor: pointer; display: block; text-decoration: none; touch-action: manipulation; transition: background .15s ease; }
 .news-item:hover, .news-item:focus-visible { background: var(--soft-blue); outline: none; }
