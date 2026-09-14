@@ -102,3 +102,4 @@ themeToggle.addEventListener("click", () => setTheme(!document.body.classList.co
 setTheme(localStorage.getItem("public-ledger-theme") === "dark");
 renderNews();
 loadNews();
+loadNews();
