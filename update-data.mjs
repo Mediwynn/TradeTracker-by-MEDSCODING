@@ -5,7 +5,9 @@ const tradeSource = "https://raw.githubusercontent.com/TattooedHead/house-stock-
 const newsSource = "https://news.google.com/rss/search?q=congressional+stock+trades+OR+government+official+financial+disclosure&hl=en-US&gl=US&ceid=US:en";
 
 function dateOnly(value) {
-  return String(value || "").slice(0, 10);
+  const text = String(value || "");
+  const match = text.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  return match ? `${match[3]}-${match[1]}-${match[2]}` : text.slice(0, 10);
 }
 
 function cutoffDate() {
@@ -52,11 +54,12 @@ async function main() {
   const trades = rawTrades.filter((item) => dateOnly(item.transaction_date || item.transactionDate) >= cutoff).map((item) => {
     const official = item.representative || item.member || item.owner || "Unknown official";
     const type = String(item.type || item.transaction_type || "").toLowerCase().includes("sale") ? "Sale" : "Purchase";
-    const amount = Number(item.amount || 0);
+    const amount = Number(item.amount_mid || item.amount || 0);
+    const state = String(item.district || "").match(/^[A-Z]{2}/)?.[0] || "";
     return {
       official,
       party: item.party || "Unknown",
-      state: item.state || "",
+      state,
       employment: "current",
       ticker: item.ticker || item.asset_description || "—",
       asset: item.asset_description || item.asset || item.ticker || "Unspecified asset",
