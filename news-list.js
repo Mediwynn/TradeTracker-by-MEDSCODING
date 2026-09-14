@@ -1,4 +1,4 @@
-const news = [
+const sampleNews = [
   { id: "defense", source: "REUTERS", date: "2026-09-14", category: "Policy & markets", relevance: 100, title: "Defense names rally as committee advances new spending bill", summary: "Policy changes could increase procurement activity across defense companies." },
   { id: "ethics", source: "AP NEWS", date: "2026-09-13", category: "Government", relevance: 96, title: "Senate ethics office updates financial disclosure guidance", summary: "New guidance explains how covered officials should report securities transactions." },
   { id: "chips", source: "BLOOMBERG", date: "2026-09-13", category: "Markets", relevance: 94, title: "Chip stocks lead a week of renewed congressional trading", summary: "Technology shares were among the most frequently mentioned names in recent disclosures." },
@@ -8,6 +8,7 @@ const news = [
   { id: "tech-volatility", source: "REUTERS", date: "2026-02-11", category: "Markets", relevance: 70, title: "Technology shares face a volatile start to the year", summary: "Large-cap technology companies trade through changing rate expectations." },
   { id: "ethics-report", source: "AP NEWS", date: "2025-10-08", category: "Government", relevance: 66, title: "Annual ethics report highlights disclosure compliance", summary: "The report summarizes common filing issues and review procedures." }
 ];
+let news = [];
 
 const resultContainer = document.querySelector("#news-results");
 const search = document.querySelector("#news-search");
@@ -22,6 +23,18 @@ let newsPage = 1;
 
 function formatDate(value) {
   return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(new Date(`${value}T12:00:00`));
+}
+
+async function loadNews() {
+  try {
+    const response = await fetch("data/news.json", { cache: "no-store" });
+    if (!response.ok) throw new Error(`News feed returned ${response.status}`);
+    news = await response.json();
+  } catch (error) {
+    console.error("Unable to load the live news feed.", error);
+    news = sampleNews;
+  }
+  renderNews();
 }
 
 function renderNews() {
@@ -66,7 +79,7 @@ function renderNews() {
 
 [search, sort, category].forEach((control) => control.addEventListener("input", () => {
   newsPage = 1;
-  renderNews();
+  loadNews();
 }));
 document.querySelector("#news-prev").addEventListener("click", () => {
   newsPage -= 1;

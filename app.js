@@ -1,4 +1,4 @@
-const trades = [
+const sampleTrades = [
   { official: "Maya Chen", party: "Democrat", state: "CA", employment: "current", ticker: "NVDA", asset: "NVIDIA Corp.", type: "Purchase", range: "$15,001 – $50,000", amount: 32500, transactionDate: "2026-09-12", disclosureDate: "Sep 14, 2026", status: "Verified", initials: "MC" },
   { official: "Thomas Reed", party: "Republican", state: "OH", employment: "current", ticker: "LMT", asset: "Lockheed Martin", type: "Purchase", range: "$1,001 – $15,000", amount: 8000, transactionDate: "2026-09-11", disclosureDate: "Sep 13, 2026", status: "Verified", initials: "TR" },
   { official: "Elena Martinez", party: "Democrat", state: "NY", employment: "former", ticker: "MSFT", asset: "Microsoft Corp.", type: "Sale", range: "$50,001 – $100,000", amount: 75000, transactionDate: "2026-09-10", disclosureDate: "Sep 13, 2026", status: "Under review", initials: "EM" },
@@ -20,6 +20,7 @@ const trades = [
   { official: "Isabel Rivera", party: "Democrat", state: "NJ", employment: "current", ticker: "NFLX", asset: "Netflix Inc.", type: "Sale", range: "$15,001 – $50,000", amount: 32500, transactionDate: "2026-08-27", disclosureDate: "Aug 30, 2026", status: "Verified", initials: "IR" }
 ];
 
+let trades = [];
 const rowContainer = document.querySelector("#trade-rows");
 const searchInput = document.querySelector("#search-input");
 const typeFilter = document.querySelector("#type-filter");
@@ -32,6 +33,19 @@ let sortDirection = 1;
 let sortKey = "transactionDate";
 const tradePageSize = 10;
 let tradePage = 1;
+
+async function loadTrades() {
+  try {
+    const response = await fetch("data/trades.json", { cache: "no-store" });
+    if (!response.ok) throw new Error(`Trade feed returned ${response.status}`);
+    trades = await response.json();
+  } catch (error) {
+    console.error("Unable to load the live trade feed.", error);
+    trades = sampleTrades;
+    notify("Live trade data is unavailable; showing the bundled sample.");
+  }
+  render();
+}
 
 function render() {
   const query = searchInput.value.trim().toLowerCase();
@@ -76,7 +90,7 @@ document.querySelectorAll(".sort-button").forEach((button) => {
     const nextKey = button.dataset.sort;
     sortDirection = sortKey === nextKey ? sortDirection * -1 : 1;
     sortKey = nextKey;
-    render();
+    loadTrades();
   });
 });
 [searchInput, typeFilter, partyFilter, employmentFilter].forEach((control) => control.addEventListener("input", () => {
