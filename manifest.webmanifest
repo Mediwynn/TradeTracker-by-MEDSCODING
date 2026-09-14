@@ -1,0 +1,17 @@
+{
+  "name": "TradeTracker by MEDSCODING",
+  "short_name": "TradeTracker",
+  "description": "Explore publicly disclosed government official stock trades, analytics, and educational signals.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#17345e",
+  "icons": [
+    {
+      "src": "app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

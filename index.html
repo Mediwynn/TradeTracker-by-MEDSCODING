@@ -9,6 +9,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="theme-color" content="#17345e" />
   </head>
   <body>
     <div class="app-shell">
@@ -287,5 +289,10 @@
     <div class="analytics-tooltip" id="analytics-tooltip" role="status"></div>
     <div class="toast" id="toast" role="status"></div>
     <script src="app.js"></script>
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => navigator.serviceWorker.register("service-worker.js"));
+      }
+    </script>
   </body>
 </html>
