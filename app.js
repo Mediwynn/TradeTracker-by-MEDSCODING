@@ -183,3 +183,4 @@ function hideAnalyticsTooltip() {
 }
 
 render();
+loadTrades();
