@@ -101,3 +101,4 @@ function setTheme(isDark) {
 themeToggle.addEventListener("click", () => setTheme(!document.body.classList.contains("dark-mode")));
 setTheme(localStorage.getItem("public-ledger-theme") === "dark");
 renderNews();
+loadNews();
