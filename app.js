@@ -48,11 +48,22 @@ async function loadTrades() {
     notify("Live trade data is unavailable; showing the bundled sample.");
   }
 
-  // Update the "Data refreshed" indicator in the topbar
+  // Update the topbar status indicator
   const liveStatus = document.querySelector(".live-status");
   if (liveStatus && fetchedAt) {
-    const label = source === "live" ? "Live data" : source === "cached" ? "Cached data" : "Sample data";
-    liveStatus.innerHTML = `<i></i> ${label} · ${new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit" }).format(new Date(fetchedAt))}`;
+    const label = source === "live" ? "Live" : source === "cached" ? "Cached" : "Sample";
+    const fetchTime = new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit" }).format(new Date(fetchedAt));
+    // Find most recent valid transaction date
+    const today = new Date().toISOString().slice(0, 10);
+    const latestDate = trades
+      .map(t => t.transactionDate)
+      .filter(d => d && d <= today)
+      .sort()
+      .at(-1);
+    const dataAsOf = latestDate
+      ? new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(new Date(latestDate + "T12:00:00"))
+      : "—";
+    liveStatus.innerHTML = `<i></i> ${label} · fetched ${fetchTime}<span class="live-status-date">Data as of ${dataAsOf}</span>`;
   }
 
   updateDashboard();

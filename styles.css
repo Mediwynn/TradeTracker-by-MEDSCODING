@@ -27,7 +27,8 @@ a { color: inherit; text-decoration: none; }
 .main-nav a { color: var(--muted); font-size: 12px; font-weight: 700; padding: 30px 0 27px; }
 .main-nav a.active, .main-nav a:hover { border-bottom: 2px solid var(--green); color: var(--ink); }
 .topbar-actions { align-items: center; display: flex; gap: 18px; margin-left: auto; }
-.live-status { color: var(--muted); font: 10px "DM Mono", monospace; }
+.live-status { color: var(--muted); display: flex; flex-direction: column; font: 10px "DM Mono", monospace; gap: 2px; line-height: 1.4; text-align: right; }
+.live-status-date { color: var(--muted); font-size: 9px; opacity: 0.75; }
 .live-status i { background: #46bd89; border-radius: 50%; display: inline-block; height: 6px; margin-right: 5px; width: 6px; }
 .icon-button, .more-button, .filter-button { background: none; border: 0; color: var(--muted); cursor: pointer; }
 .icon-button { font-size: 16px; }
