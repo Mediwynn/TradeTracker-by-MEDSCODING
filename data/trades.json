@@ -1648,6 +1648,38 @@
     "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/20035411.pdf"
   },
   {
+    "official": "Thomas H. Kean",
+    "party": "Unknown",
+    "state": "NJ",
+    "employment": "current",
+    "ticker": "LIN",
+    "asset": "Linde plc - Ordinary Shares",
+    "type": "Purchase",
+    "range": "$1,001 - $15,000",
+    "amount": 8000,
+    "transactionDate": "2026-08-10",
+    "disclosureDate": "09/01/2026",
+    "status": "Verified",
+    "initials": "TH",
+    "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/20035431.pdf"
+  },
+  {
+    "official": "Thomas H. Kean",
+    "party": "Unknown",
+    "state": "NJ",
+    "employment": "current",
+    "ticker": "MTZ",
+    "asset": "MasTec, Inc. Common Stock",
+    "type": "Purchase",
+    "range": "$1,001 - $15,000",
+    "amount": 8000,
+    "transactionDate": "2026-08-21",
+    "disclosureDate": "09/01/2026",
+    "status": "Verified",
+    "initials": "TH",
+    "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/20035431.pdf"
+  },
+  {
     "official": "Kevin Hern",
     "party": "Unknown",
     "state": "OK",
@@ -30718,21 +30750,5 @@
     "status": "Verified",
     "initials": "CF",
     "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20032106.pdf"
-  },
-  {
-    "official": "Debbie Wasserman Schultz",
-    "party": "Unknown",
-    "state": "FL",
-    "employment": "current",
-    "ticker": "BRY",
-    "asset": "Berry Corporation",
-    "type": "Sale",
-    "range": "$1,972.55",
-    "amount": 1972,
-    "transactionDate": "2025-09-15",
-    "disclosureDate": "09/16/2025",
-    "status": "Verified",
-    "initials": "DW",
-    "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20032230.pdf"
   }
 ]
