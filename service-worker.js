@@ -18,6 +18,7 @@ const APP_SHELL = [
 const BYPASS_ORIGINS = [
   "raw.githubusercontent.com",
   "api.allorigins.win",
+  "api.rss2json.com",
   "news.google.com",
 ];
 

@@ -12,10 +12,12 @@
 const TRADE_SOURCE =
   "https://raw.githubusercontent.com/TattooedHead/house-stock-watcher-data/main/data/all_transactions.json";
 
-// allorigins.win wraps the response in { contents: "..." } and adds CORS headers
 const NEWS_RSS =
   "https://news.google.com/rss/search?q=congressional+stock+trades+OR+government+official+financial+disclosure&hl=en-US&gl=US&ceid=US:en";
-const NEWS_PROXY = `https://api.allorigins.win/get?url=${encodeURIComponent(NEWS_RSS)}`;
+// rss2json.com converts an RSS feed to JSON with CORS headers — fast and purpose-built
+const NEWS_PROXY_PRIMARY = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(NEWS_RSS)}`;
+// allorigins.win as secondary fallback — wraps response in { contents: "..." }
+const NEWS_PROXY_FALLBACK = `https://api.allorigins.win/get?url=${encodeURIComponent(NEWS_RSS)}`;
 
 const DAYS = 365;
 
@@ -167,16 +169,45 @@ function normaliseTrades(raw, cutoff) {
 async function fetchNews() {
   const cutoff = cutoffDate();
 
-  // 1. Try live RSS via CORS proxy
+  // 1a. Try rss2json.com — returns structured JSON directly, no XML parsing needed
   try {
-    const res = await fetch(NEWS_PROXY, { cache: "no-store" });
+    const res = await fetch(NEWS_PROXY_PRIMARY, { cache: "no-store" });
+    if (!res.ok) throw new Error(`rss2json returned ${res.status}`);
+    const json = await res.json();
+    if (json.status !== "ok" || !Array.isArray(json.items)) throw new Error("rss2json bad response");
+    const news = json.items
+      .map((item, index) => {
+        const date = new Date(item.pubDate);
+        if (Number.isNaN(date.getTime())) return null;
+        const iso = date.toISOString().slice(0, 10);
+        if (iso < cutoff) return null;
+        return {
+          id: `feed-${date.getTime()}-${index}`,
+          source: sourceFor(item.title),
+          date: iso,
+          category: categoryFor(`${item.title} ${item.description || ""}`),
+          relevance: Math.max(1, 100 - index),
+          title: item.title.replace(/ - [^-]+$/, "").trim(),
+          summary: escapeXml(item.description) || "Publicly available news related to government disclosures and markets.",
+          originalUrl: item.link,
+        };
+      })
+      .filter(Boolean);
+    if (news.length > 0) return { news, source: "live", fetchedAt: new Date().toISOString() };
+  } catch (err) {
+    console.warn("[TradeTracker] rss2json fetch failed, trying allorigins fallback.", err.message);
+  }
+
+  // 1b. Fallback CORS proxy — allorigins returns { contents: "<xml>..." }
+  try {
+    const res = await fetch(NEWS_PROXY_FALLBACK, { cache: "no-store" });
     if (!res.ok) throw new Error(`Proxy returned ${res.status}`);
     const { contents } = await res.json();
     if (!contents) throw new Error("Proxy returned empty contents");
     const news = normaliseNews(parseXmlItems(contents), cutoff);
     if (news.length > 0) return { news, source: "live", fetchedAt: new Date().toISOString() };
   } catch (err) {
-    console.warn("[TradeTracker] Live news fetch failed, trying cache.", err.message);
+    console.warn("[TradeTracker] allorigins proxy failed, trying cache.", err.message);
   }
 
   // 2. Try static fallback in repo
