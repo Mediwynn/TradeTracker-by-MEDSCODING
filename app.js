@@ -88,7 +88,26 @@ function sectorFor(asset, ticker) {
 function updateDashboard() {
   if (!trades.length) return;
 
+  const rangeSelect = document.querySelector("#analytics-range");
+  const rangeValue = rangeSelect ? rangeSelect.value : "Last 6 months";
+
   const now = new Date();
+  const todayStr = now.toISOString().slice(0, 10);
+
+  // Determine cutoff for analytics based on selected range
+  const analyticsCutoff = (() => {
+    const d = new Date(now);
+    if (rangeValue === "Last 6 months") d.setMonth(d.getMonth() - 6);
+    else if (rangeValue === "Last 12 months") d.setMonth(d.getMonth() - 12);
+    else return null; // All available history — no cutoff
+    return d.toISOString().slice(0, 10);
+  })();
+
+  // Subset of trades used for analytics charts (respects range dropdown)
+  const analyticsTrades = analyticsCutoff
+    ? trades.filter(t => t.transactionDate >= analyticsCutoff && t.transactionDate <= todayStr)
+    : trades.filter(t => t.transactionDate <= todayStr);
+
   const fmt = new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric" });
 
   // Hero eyebrow date
@@ -127,11 +146,18 @@ function updateDashboard() {
   }
   if (volumeTrendEl) { volumeTrendEl.textContent = "365-day range"; volumeTrendEl.className = "trend"; }
 
-  // ── Top sector ────────────────────────────────────────────────────────────
+  // ── Top sector (uses full trades, not range-filtered) ────────────────────
   const sectorCounts = {};
   trades.forEach(t => {
     const s = sectorFor(t.asset || "", t.ticker || "");
     sectorCounts[s] = (sectorCounts[s] || 0) + 1;
+  });
+
+  // Sector counts for analytics chart (range-filtered)
+  const analyticsSectorCounts = {};
+  analyticsTrades.forEach(t => {
+    const s = sectorFor(t.asset || "", t.ticker || "");
+    analyticsSectorCounts[s] = (analyticsSectorCounts[s] || 0) + 1;
   });
   const topSector = Object.entries(sectorCounts).sort((a, b) => b[1] - a[1])[0];
   const topSectorEl = document.querySelector("#top-sector");
@@ -143,7 +169,6 @@ function updateDashboard() {
   }
 
   // ── Latest disclosure — exclude future-dated records (bad upstream data) ──
-  const todayStr = new Date().toISOString().slice(0, 10);
   const sorted = [...trades]
     .filter(t => t.transactionDate <= todayStr)
     .sort((a, b) => b.transactionDate.localeCompare(a.transactionDate));
@@ -164,13 +189,15 @@ function updateDashboard() {
 
   // ── Analytics: monthly bar chart ──────────────────────────────────────────
   const monthCounts = {};
-  trades.forEach(t => {
-    const month = t.transactionDate.slice(0, 7); // YYYY-MM
+  analyticsTrades.forEach(t => {
+    const month = t.transactionDate.slice(0, 7);
     monthCounts[month] = (monthCounts[month] || 0) + 1;
   });
-  const months = Object.keys(monthCounts).sort().slice(-6);
+  // Show enough months to cover the selected range
+  const maxMonths = rangeValue === "Last 6 months" ? 6 : rangeValue === "Last 12 months" ? 12 : 24;
+  const months = Object.keys(monthCounts).sort().slice(-maxMonths);
   const maxCount = Math.max(...months.map(m => monthCounts[m]), 1);
-  const total365 = trades.length;
+  const total365 = analyticsTrades.length;
   const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
   const barChart = document.querySelector("#bar-chart");
@@ -194,9 +221,9 @@ function updateDashboard() {
   }
 
   // ── Analytics: buy/sell split ─────────────────────────────────────────────
-  const purchases = trades.filter(t => t.type === "Purchase").length;
-  const sales = trades.filter(t => t.type === "Sale").length;
-  const buyPct = Math.round((purchases / trades.length) * 100);
+  const purchases = analyticsTrades.filter(t => t.type === "Purchase").length;
+  const sales = analyticsTrades.filter(t => t.type === "Sale").length;
+  const buyPct = analyticsTrades.length > 0 ? Math.round((purchases / analyticsTrades.length) * 100) : 0;
   const sellPct = 100 - buyPct;
 
   const miniPiePct = document.querySelector("#mini-pie-pct");
@@ -226,10 +253,10 @@ function updateDashboard() {
   // ── Analytics: sector breakdown chart ────────────────────────────────────
   const sectorChart = document.querySelector("#sector-chart");
   if (sectorChart) {
-    const sectorEntries = Object.entries(sectorCounts).sort((a, b) => b[1] - a[1]).slice(0, 4);
+    const sectorEntries = Object.entries(analyticsSectorCounts).sort((a, b) => b[1] - a[1]).slice(0, 4);
     const maxSector = sectorEntries[0]?.[1] || 1;
     const rows = sectorEntries.map(([name, count]) => {
-      const pct = Math.round((count / trades.length) * 100);
+      const pct = Math.round((count / analyticsTrades.length) * 100);
       const barWidth = Math.round((count / maxSector) * 100);
       return `<div class="sector-row" tabindex="0" data-portrait="${pct}%" data-tooltip="${name} · ${pct}%|+ ${count} transactions|- Volume is not quality"><span>${name}</span><div><i style="width:${barWidth}%"></i></div><b>${pct}%</b></div>`;
     }).join("");
@@ -340,7 +367,7 @@ if (localStorage.getItem("public-ledger-theme") === "dark") {
   document.body.classList.add("dark-mode");
   document.querySelector("#theme-toggle").textContent = "☀";
 }
-document.querySelector("#analytics-range").addEventListener("change", (event) => notify(`Analytics range set to ${event.target.value.toLowerCase()}.`));
+document.querySelector("#analytics-range").addEventListener("change", () => updateDashboard());
 
 function wireTooltips(root) {
   (root || document).querySelectorAll("[data-tooltip]").forEach((element) => {
