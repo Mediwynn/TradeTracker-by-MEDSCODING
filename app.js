@@ -65,7 +65,7 @@ async function loadTrades() {
     const dataAsOf = latestDate
       ? new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(new Date(latestDate + "T12:00:00"))
       : "—";
-    liveStatus.innerHTML = `<i></i> ${label} · fetched ${fetchTime}<span class="live-status-date">Data as of ${dataAsOf}</span>`;
+    liveStatus.innerHTML = `<i></i> Checked ${fetchTime}<span class="live-status-date">Latest trade: ${dataAsOf}</span>`;
   }
 
   updateDashboard();
