@@ -1,4 +1,4 @@
-const CACHE_NAME = "tradetracker-v6";
+const CACHE_NAME = "tradetracker-v7";
 const APP_SHELL = [
   "./",
   "./index.html",
