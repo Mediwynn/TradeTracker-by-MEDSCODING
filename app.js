@@ -271,7 +271,9 @@ function render() {
 
   emptyState.classList.toggle("hidden", filtered.length > 0);
   recordCount.textContent = `${filtered.length} record${filtered.length === 1 ? "" : "s"}`;
-  showingCount.textContent = visibleTrades.length;
+  const rangeStart = filtered.length > 0 ? start + 1 : 0;
+  const rangeEnd = start + visibleTrades.length;
+  showingCount.textContent = `${rangeStart}–${rangeEnd} / ${filtered.length}`;
   document.querySelector("#total-count").textContent = filtered.length;
   document.querySelector("#trade-page").textContent = `${tradePage}/${totalPages}`;
   document.querySelector("#trade-prev").disabled = tradePage === 1;
