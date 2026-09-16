@@ -1,22 +1,38 @@
 # TradeTracker by MEDSCODING
 
-TradeTracker is a browser-based prototype for exploring publicly disclosed government official stock trades and related market context.
+TradeTracker is a browser-based app for exploring publicly disclosed government official stock trades and related market context. Data is fetched live on every page load — no server required.
 
 ## Features
 
+- Live trade data fetched directly from public disclosure sources on every load
+- Live news feed via Google News RSS (congressional and market context)
 - Search, filter, and sort trade disclosures
 - Current and former official filtering
 - Amount and transaction-time sorting
 - Historical analytics with trend and sector views
 - Evidence-based signals with explanatory context
 - Light and dark themes
-- Compact browser launcher for Windows
+- Works on any device — desktop, phone, tablet
 
 ## Running locally
 
-Double-click `run-trade-tracker.bat`, or open `index.html` in a browser.
+```
+npm start
+```
 
-The current version uses sample data. A production deployment should connect the interface to verified public disclosure, market, and news data providers.
+This opens `index.html` in your default browser. No build step or install required.
+
+## Sharing
+
+Send `TradeTracker.url` to any Windows user. They can double-click it to open the hosted app at:
+
+https://mediwynn.github.io/TradeTracker-by-MEDSCODING/
+
+## Data sources
+
+- **Trades** — [House Stock Watcher](https://github.com/TattooedHead/house-stock-watcher-data) public disclosure dataset, covering the last 365 days
+- **News** — Google News RSS, filtered for congressional and government financial disclosure topics
+- **Fallback** — Static JSON files in `data/` are refreshed daily by a GitHub Actions workflow and served as a backup if live sources are temporarily unavailable
 
 ## Disclaimer
 

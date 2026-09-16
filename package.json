@@ -1,8 +1,9 @@
 {
   "name": "trade-tracker",
   "version": "1.0.0",
-  "description": "TradeTracker by MEDSCODING",
+  "description": "TradeTracker by MEDSCODING — live government trade disclosures",
   "scripts": {
-    "start": "start index.html"
+    "start": "start index.html",
+    "update-data": "node scripts/update-data.mjs"
   }
 }
