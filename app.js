@@ -55,7 +55,173 @@ async function loadTrades() {
     liveStatus.innerHTML = `<i></i> ${label} · ${new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit" }).format(new Date(fetchedAt))}`;
   }
 
+  updateDashboard();
   render();
+}
+
+// ─── Sector classifier (mirrors data-fetcher.js logic) ──────────────────────
+function sectorFor(asset, ticker) {
+  const text = `${asset} ${ticker}`.toLowerCase();
+  if (/nvidia|amd|intel|qualcomm|broadcom|tsmc|applied material|lam research|kla|micron|marvell|arm|chip|semi/.test(text)) return "Technology";
+  if (/lockheed|raytheon|rtx|northrop|general dynamics|boeing|l3harris|bae|defense|aerospace/.test(text)) return "Defense";
+  if (/johnson|pfizer|merck|abbvie|united health|cvs|humana|cigna|eli lilly|amgen|biogen|gilead|health|pharma|medical/.test(text)) return "Healthcare";
+  if (/exxon|chevron|conocophillips|pioneer|schlumberger|halliburton|energy|oil|gas|petroleum/.test(text)) return "Energy";
+  if (/jpmorgan|bank of america|wells fargo|citigroup|goldman|morgan stanley|visa|mastercard|blackrock|finance|financial|bank|insurance/.test(text)) return "Finance";
+  if (/amazon|apple|microsoft|alphabet|google|meta|netflix|salesforce|oracle|adobe|software|cloud|tech/.test(text)) return "Technology";
+  return "Other";
+}
+
+// ─── Dashboard metrics ───────────────────────────────────────────────────────
+function updateDashboard() {
+  if (!trades.length) return;
+
+  const now = new Date();
+  const fmt = new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric" });
+
+  // Hero eyebrow date
+  const heroEyebrow = document.querySelector("#hero-eyebrow");
+  if (heroEyebrow) heroEyebrow.textContent = `PUBLIC DISCLOSURES · ${fmt.format(now).toUpperCase()}`;
+
+  // ── Week counts ────────────────────────────────────────────────────────────
+  const weekStart = new Date(now); weekStart.setUTCDate(now.getUTCDate() - 7);
+  const prevWeekStart = new Date(now); prevWeekStart.setUTCDate(now.getUTCDate() - 14);
+  const weekStartStr = weekStart.toISOString().slice(0, 10);
+  const prevWeekStartStr = prevWeekStart.toISOString().slice(0, 10);
+
+  const thisWeek = trades.filter(t => t.transactionDate >= weekStartStr).length;
+  const lastWeek = trades.filter(t => t.transactionDate >= prevWeekStartStr && t.transactionDate < weekStartStr).length;
+  const weekDiff = lastWeek > 0 ? Math.round(((thisWeek - lastWeek) / lastWeek) * 100) : 0;
+  const weekUp = weekDiff >= 0;
+
+  const weekCountEl = document.querySelector("#week-count");
+  const weekVsEl = document.querySelector("#week-vs");
+  const weekTrendEl = document.querySelector("#week-trend");
+  if (weekCountEl) weekCountEl.textContent = thisWeek.toLocaleString();
+  if (weekVsEl) weekVsEl.textContent = `vs. ${lastWeek.toLocaleString()} last week`;
+  if (weekTrendEl) {
+    weekTrendEl.textContent = `${weekUp ? "↑" : "↓"} ${Math.abs(weekDiff)}%`;
+    weekTrendEl.className = `trend ${weekUp ? "up" : "down"}`;
+  }
+
+  // ── Reported volume ────────────────────────────────────────────────────────
+  const totalAmount = trades.reduce((sum, t) => sum + (t.amount || 0), 0);
+  const volumeEl = document.querySelector("#volume-value");
+  const volumeTrendEl = document.querySelector("#volume-trend");
+  if (volumeEl) {
+    if (totalAmount >= 1e9) volumeEl.textContent = `$${(totalAmount / 1e9).toFixed(1)}B`;
+    else if (totalAmount >= 1e6) volumeEl.textContent = `$${(totalAmount / 1e6).toFixed(1)}M`;
+    else volumeEl.textContent = `$${(totalAmount / 1e3).toFixed(0)}K`;
+  }
+  if (volumeTrendEl) { volumeTrendEl.textContent = "365-day range"; volumeTrendEl.className = "trend"; }
+
+  // ── Top sector ────────────────────────────────────────────────────────────
+  const sectorCounts = {};
+  trades.forEach(t => {
+    const s = sectorFor(t.asset || "", t.ticker || "");
+    sectorCounts[s] = (sectorCounts[s] || 0) + 1;
+  });
+  const topSector = Object.entries(sectorCounts).sort((a, b) => b[1] - a[1])[0];
+  const topSectorEl = document.querySelector("#top-sector");
+  const topSectorPctEl = document.querySelector("#top-sector-pct");
+  if (topSector && topSectorEl) {
+    const pct = Math.round((topSector[1] / trades.length) * 100);
+    topSectorEl.textContent = topSector[0];
+    if (topSectorPctEl) topSectorPctEl.textContent = `${pct}% of reported activity`;
+  }
+
+  // ── Latest disclosure ─────────────────────────────────────────────────────
+  const sorted = [...trades].sort((a, b) => b.transactionDate.localeCompare(a.transactionDate));
+  const latest = sorted[0];
+  const latestOfficialEl = document.querySelector("#latest-official");
+  const latestFiledEl = document.querySelector("#latest-filed");
+  if (latest && latestOfficialEl) {
+    const nameParts = latest.official.split(" ");
+    const shortName = nameParts.length >= 2 ? `${nameParts[0][0]}. ${nameParts[nameParts.length - 1]}` : latest.official;
+    latestOfficialEl.textContent = shortName;
+    const txDate = new Date(latest.transactionDate + "T12:00:00");
+    const daysAgo = Math.floor((now - txDate) / 86400000);
+    const timeLabel = daysAgo === 0 ? "today" : daysAgo === 1 ? "1 day ago" : `${daysAgo} days ago`;
+    // Count transactions by this official on the same date
+    const officialTxCount = trades.filter(t => t.official === latest.official && t.transactionDate === latest.transactionDate).length;
+    if (latestFiledEl) latestFiledEl.textContent = `Filed ${timeLabel} · ${officialTxCount} transaction${officialTxCount !== 1 ? "s" : ""}`;
+  }
+
+  // ── Analytics: monthly bar chart ──────────────────────────────────────────
+  const monthCounts = {};
+  trades.forEach(t => {
+    const month = t.transactionDate.slice(0, 7); // YYYY-MM
+    monthCounts[month] = (monthCounts[month] || 0) + 1;
+  });
+  const months = Object.keys(monthCounts).sort().slice(-6);
+  const maxCount = Math.max(...months.map(m => monthCounts[m]), 1);
+  const total365 = trades.length;
+  const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+  const barChart = document.querySelector("#bar-chart");
+  const chartLabels = document.querySelector("#chart-labels");
+  const analyticsTotalEl = document.querySelector("#analytics-total");
+  const analyticsTotalFilingsEl = document.querySelector("#analytics-total-filings");
+  if (analyticsTotalEl) analyticsTotalEl.textContent = total365.toLocaleString();
+  if (analyticsTotalFilingsEl) analyticsTotalFilingsEl.textContent = total365.toLocaleString();
+
+  if (barChart && months.length) {
+    barChart.innerHTML = months.map((m, i) => {
+      const count = monthCounts[m];
+      const h = Math.round((count / maxCount) * 100);
+      const label = monthNames[parseInt(m.slice(5), 10) - 1];
+      const isCurrent = i === months.length - 1;
+      return `<span tabindex="0" style="height:${h}%" ${isCurrent ? 'class="current-bar"' : ""} data-portrait="${count}" data-tooltip="${label} · ${count.toLocaleString()} filings|+ ${count} transactions recorded|- Volume does not imply intent"></span>`;
+    }).join("");
+  }
+  if (chartLabels && months.length) {
+    chartLabels.innerHTML = months.map(m => `<span>${monthNames[parseInt(m.slice(5), 10) - 1]}</span>`).join("");
+  }
+
+  // ── Analytics: buy/sell split ─────────────────────────────────────────────
+  const purchases = trades.filter(t => t.type === "Purchase").length;
+  const sales = trades.filter(t => t.type === "Sale").length;
+  const buyPct = Math.round((purchases / trades.length) * 100);
+  const sellPct = 100 - buyPct;
+
+  const miniPiePct = document.querySelector("#mini-pie-pct");
+  const miniBuyPct = document.querySelector("#mini-buy-pct");
+  const miniSellPct = document.querySelector("#mini-sell-pct");
+  const miniPieLabel = document.querySelector("#mini-pie-label");
+  const buySellTitle = document.querySelector("#buy-sell-title");
+  const donutEl = document.querySelector("#donut");
+  const donutCount = document.querySelector("#donut-count");
+  const legendBuyPct = document.querySelector("#legend-buy-pct");
+  const legendSellPct = document.querySelector("#legend-sell-pct");
+  const legendBuy = document.querySelector("#legend-buy");
+  const legendSell = document.querySelector("#legend-sell");
+
+  if (miniPiePct) miniPiePct.textContent = `${buyPct}%`;
+  if (miniBuyPct) miniBuyPct.textContent = `${buyPct}%`;
+  if (miniSellPct) miniSellPct.textContent = `${sellPct}%`;
+  if (miniPieLabel) miniPieLabel.setAttribute("aria-label", `${buyPct} percent purchases, ${sellPct} percent sales`);
+  if (buySellTitle) buySellTitle.innerHTML = `${buyPct}% <small>purchases</small>`;
+  if (donutEl) { donutEl.dataset.portrait = `${buyPct}% / ${sellPct}%`; donutEl.dataset.tooltip = `Buy / sell mix|+ Purchases at ${buyPct}%|- Intent does not predict price`; }
+  if (donutCount) donutCount.innerHTML = `${total365.toLocaleString()}<small>trades</small>`;
+  if (legendBuyPct) legendBuyPct.textContent = `${buyPct}%`;
+  if (legendSellPct) legendSellPct.textContent = `${sellPct}%`;
+  if (legendBuy) { legendBuy.dataset.portrait = `${buyPct}%`; legendBuy.dataset.tooltip = `Purchases · ${buyPct}%|+ Buying leads|- Ranges are estimates`; }
+  if (legendSell) { legendSell.dataset.portrait = `${sellPct}%`; legendSell.dataset.tooltip = `Sales · ${sellPct}%|+ Useful context|- May be rebalancing`; }
+
+  // ── Analytics: sector breakdown chart ────────────────────────────────────
+  const sectorChart = document.querySelector("#sector-chart");
+  if (sectorChart) {
+    const sectorEntries = Object.entries(sectorCounts).sort((a, b) => b[1] - a[1]).slice(0, 4);
+    const maxSector = sectorEntries[0]?.[1] || 1;
+    const rows = sectorEntries.map(([name, count]) => {
+      const pct = Math.round((count / trades.length) * 100);
+      const barWidth = Math.round((count / maxSector) * 100);
+      return `<div class="sector-row" tabindex="0" data-portrait="${pct}%" data-tooltip="${name} · ${pct}%|+ ${count} transactions|- Volume is not quality"><span>${name}</span><div><i style="width:${barWidth}%"></i></div><b>${pct}%</b></div>`;
+    }).join("");
+    sectorChart.innerHTML = `<div class="chart-title"><span>Top sectors by volume</span><small>reported ranges</small></div>${rows}`;
+  }
+
+  // Re-wire tooltips for any dynamically created elements
+  wireTooltips();
 }
 
 function render() {
@@ -158,21 +324,27 @@ if (localStorage.getItem("public-ledger-theme") === "dark") {
   document.querySelector("#theme-toggle").textContent = "☀";
 }
 document.querySelector("#analytics-range").addEventListener("change", (event) => notify(`Analytics range set to ${event.target.value.toLowerCase()}.`));
-document.querySelectorAll("[data-tooltip]").forEach((element) => {
-  const tooltipText = element.dataset.tooltip.replaceAll("|", "\\A");
-  element.style.setProperty("--tooltip-text", `"${tooltipText}"`);
-  element.style.setProperty("--tooltip-portrait", `"${element.dataset.portrait || ""}"`);
-  element.addEventListener("click", () => {
-    const analytics = document.querySelector("#analytics");
-    const detailMode = analytics.classList.toggle("analytics-detail-mode");
-    document.querySelector("#analytics-mode").textContent = detailMode ? "Landscape · more detail" : "Portrait · numbers only";
-    showAnalyticsTooltip(element);
+
+function wireTooltips(root) {
+  (root || document).querySelectorAll("[data-tooltip]").forEach((element) => {
+    if (element.dataset.tooltipWired) return; // avoid double-wiring
+    element.dataset.tooltipWired = "1";
+    const tooltipText = element.dataset.tooltip.replaceAll("|", "\\A");
+    element.style.setProperty("--tooltip-text", `"${tooltipText}"`);
+    element.style.setProperty("--tooltip-portrait", `"${element.dataset.portrait || ""}"`);
+    element.addEventListener("click", () => {
+      const analytics = document.querySelector("#analytics");
+      const detailMode = analytics.classList.toggle("analytics-detail-mode");
+      document.querySelector("#analytics-mode").textContent = detailMode ? "Landscape · more detail" : "Portrait · numbers only";
+      showAnalyticsTooltip(element);
+    });
+    element.addEventListener("mouseenter", () => showAnalyticsTooltip(element));
+    element.addEventListener("focus", () => showAnalyticsTooltip(element));
+    element.addEventListener("mouseleave", hideAnalyticsTooltip);
+    element.addEventListener("blur", hideAnalyticsTooltip);
   });
-  element.addEventListener("mouseenter", () => showAnalyticsTooltip(element));
-  element.addEventListener("focus", () => showAnalyticsTooltip(element));
-  element.addEventListener("mouseleave", hideAnalyticsTooltip);
-  element.addEventListener("blur", hideAnalyticsTooltip);
-});
+}
+wireTooltips();
 
 const analyticsTooltip = document.querySelector("#analytics-tooltip");
 document.body.classList.add("analytics-custom-tooltip");
