@@ -21,6 +21,7 @@ const sampleTrades = [
 ];
 
 let trades = [];
+let lastFetchTime = Date.now();
 const rowContainer = document.querySelector("#trade-rows");
 const searchInput = document.querySelector("#search-input");
 const typeFilter = document.querySelector("#type-filter");
@@ -35,6 +36,7 @@ const tradePageSize = 10;
 let tradePage = 1;
 
 async function loadTrades() {
+  lastFetchTime = Date.now();
   const { fetchTrades } = window.TradeTrackerData;
   const { trades: liveTrades, source, fetchedAt } = await fetchTrades();
 
@@ -381,3 +383,16 @@ function hideAnalyticsTooltip() {
 
 render();
 loadTrades();
+
+// ── Background auto-refresh ───────────────────────────────────────────────
+// Re-fetches live data every 2 hours while the page is open.
+const REFRESH_MS = 2 * 60 * 60 * 1000;
+
+setInterval(() => {
+  if (!document.hidden) loadTrades();
+}, REFRESH_MS);
+
+// Also refresh when the user returns to the tab if 2+ hours have passed.
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden && Date.now() - lastFetchTime >= REFRESH_MS) loadTrades();
+});
