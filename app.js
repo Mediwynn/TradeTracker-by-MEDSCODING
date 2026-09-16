@@ -35,15 +35,26 @@ const tradePageSize = 10;
 let tradePage = 1;
 
 async function loadTrades() {
-  try {
-    const response = await fetch("data/trades.json", { cache: "no-store" });
-    if (!response.ok) throw new Error(`Trade feed returned ${response.status}`);
-    trades = await response.json();
-  } catch (error) {
-    console.error("Unable to load the live trade feed.", error);
+  const { fetchTrades } = window.TradeTrackerData;
+  const { trades: liveTrades, source, fetchedAt } = await fetchTrades();
+
+  if (liveTrades !== null) {
+    trades = liveTrades;
+    if (source === "cached") {
+      notify("Showing cached trade data — live source temporarily unavailable.");
+    }
+  } else {
     trades = sampleTrades;
     notify("Live trade data is unavailable; showing the bundled sample.");
   }
+
+  // Update the "Data refreshed" indicator in the topbar
+  const liveStatus = document.querySelector(".live-status");
+  if (liveStatus && fetchedAt) {
+    const label = source === "live" ? "Live data" : source === "cached" ? "Cached data" : "Sample data";
+    liveStatus.innerHTML = `<i></i> ${label} · ${new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit" }).format(new Date(fetchedAt))}`;
+  }
+
   render();
 }
 

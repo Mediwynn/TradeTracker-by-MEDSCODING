@@ -79,9 +79,10 @@ async function loadArticle() {
   const articleId = new URLSearchParams(window.location.search).get("id");
   const fallback = articles[articleId] || articles.defense;
   try {
-    const response = await fetch("data/news.json", { cache: "no-store" });
-    if (!response.ok) throw new Error("News feed returned " + response.status);
-    const liveArticle = (await response.json()).find((item) => item.id === articleId);
+    const { fetchNews } = window.TradeTrackerData;
+    const { news: liveNews } = await fetchNews();
+    const pool = liveNews || [];
+    const liveArticle = pool.find((item) => item.id === articleId);
     if (!liveArticle) return renderArticle(fallback);
     renderArticle({
       source: liveArticle.source || "PUBLIC NEWS",

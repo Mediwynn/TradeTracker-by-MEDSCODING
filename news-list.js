@@ -54,21 +54,39 @@ function formatDate(value) {
 
 async function loadNews() {
 
-  try {
+  const { fetchNews } = window.TradeTrackerData;
 
-    const response = await fetch("data/news.json", { cache: "no-store" });
+  const { news: liveNews, source, fetchedAt } = await fetchNews();
 
-    if (!response.ok) throw new Error(`News feed returned ${response.status}`);
 
-    news = await response.json();
 
-  } catch (error) {
+  if (liveNews !== null) {
 
-    console.error("Unable to load the live news feed.", error);
+    news = liveNews;
+
+  } else {
 
     news = sampleNews;
 
   }
+
+
+
+  // Update the date range label to also show fetch status
+
+  const rangeEl = document.querySelector("#news-range");
+
+  if (rangeEl && fetchedAt) {
+
+    const label = source === "live" ? "Live" : source === "cached" ? "Cached" : "Sample";
+
+    const time = new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit" }).format(new Date(fetchedAt));
+
+    rangeEl.dataset.fetchStatus = `${label} · fetched ${time}`;
+
+  }
+
+
 
   renderNews();
 
@@ -144,7 +162,9 @@ function renderNews() {
 
     const dates = filtered.map((item) => item.date).sort();
 
-    range.textContent = `Available news: ${formatDate(dates[0])} – ${formatDate(dates[dates.length - 1])}`;
+    const status = range.dataset.fetchStatus ? ` · ${range.dataset.fetchStatus}` : "";
+
+    range.textContent = `Available news: ${formatDate(dates[0])} – ${formatDate(dates[dates.length - 1])}${status}`;
 
   } else {
 

@@ -1,15 +1,24 @@
-const CACHE_NAME = "tradetracker-v5";
+const CACHE_NAME = "tradetracker-v6";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./styles.css",
   "./app.js",
+  "./data-fetcher.js",
   "./news.html",
   "./news-detail.js",
   "./news-list.html",
-  "./news-list.js?v=4",
+  "./news-list.js?v=5",
   "./manifest.webmanifest",
   "./app-icon.svg"
+];
+
+// These origins must always go directly to the network — never served from cache.
+// Includes the live trade source, the CORS proxy, and Google News RSS.
+const BYPASS_ORIGINS = [
+  "raw.githubusercontent.com",
+  "api.allorigins.win",
+  "news.google.com",
 ];
 
 self.addEventListener("install", (event) => {
@@ -26,9 +35,17 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   const requestUrl = new URL(event.request.url);
+
+  // Always let external live-data requests go straight to the network.
+  // The data-fetcher handles its own retry/fallback logic.
+  if (BYPASS_ORIGINS.some((origin) => requestUrl.hostname === origin)) {
+    return; // no respondWith — browser fetches normally
+  }
+
   const isDataFeed = requestUrl.pathname.endsWith(".json") && requestUrl.pathname.includes("/data/");
 
   if (isDataFeed) {
+    // Static fallback JSON: network-first, cache on success, serve cache offline
     event.respondWith(
       fetch(event.request)
         .then((response) => {
@@ -43,6 +60,7 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
+  // App shell: cache-first
   event.respondWith(
     caches.match(event.request).then((cached) => cached || fetch(event.request).then((response) => {
       if (event.request.method === "GET" && response.ok) {
