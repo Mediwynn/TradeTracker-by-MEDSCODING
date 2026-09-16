@@ -1,0 +1,8 @@
+{
+  "name": "trade-tracker",
+  "version": "1.0.0",
+  "description": "TradeTracker by MEDSCODING",
+  "scripts": {
+    "start": "start index.html"
+  }
+}

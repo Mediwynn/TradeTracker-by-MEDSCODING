@@ -1,0 +1,10 @@
+TradeTracker shareable launcher
+
+Send the file named TradeTracker.url to another Windows user. They can
+double-click it to open the hosted TradeTracker app in their default browser.
+
+Website:
+https://mediwynn.github.io/TradeTracker-by-MEDSCODING/
+
+The recipient does not need the source code or a local installation. An
+internet connection and a modern web browser are required.
