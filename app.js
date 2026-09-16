@@ -129,8 +129,11 @@ function updateDashboard() {
     if (topSectorPctEl) topSectorPctEl.textContent = `${pct}% of reported activity`;
   }
 
-  // ── Latest disclosure ─────────────────────────────────────────────────────
-  const sorted = [...trades].sort((a, b) => b.transactionDate.localeCompare(a.transactionDate));
+  // ── Latest disclosure — exclude future-dated records (bad upstream data) ──
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const sorted = [...trades]
+    .filter(t => t.transactionDate <= todayStr)
+    .sort((a, b) => b.transactionDate.localeCompare(a.transactionDate));
   const latest = sorted[0];
   const latestOfficialEl = document.querySelector("#latest-official");
   const latestFiledEl = document.querySelector("#latest-filed");

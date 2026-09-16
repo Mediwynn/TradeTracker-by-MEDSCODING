@@ -121,10 +121,11 @@ async function fetchTrades() {
 }
 
 function normaliseTrades(raw, cutoff) {
+  const today = new Date().toISOString().slice(0, 10);
   return raw
     .map((item) => {
       const txDate = dateOnly(item.transaction_date || item.transactionDate);
-      if (!txDate || txDate < cutoff) return null;
+      if (!txDate || txDate < cutoff || txDate > today) return null; // reject missing, too old, or future-dated
 
       const official =
         item.representative || item.member || item.owner || "Unknown official";
