@@ -1,4 +1,4 @@
-const CACHE_NAME = "tradetracker-v7";
+const CACHE_NAME = "tradetracker-v8";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -14,7 +14,6 @@ const APP_SHELL = [
 ];
 
 // These origins must always go directly to the network — never served from cache.
-// Includes the live trade source, the CORS proxy, and Google News RSS.
 const BYPASS_ORIGINS = [
   "raw.githubusercontent.com",
   "api.allorigins.win",
@@ -29,7 +28,7 @@ self.addEventListener("install", (event) => {
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) => Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)))
+    caches.keys().then((keys) => Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))))
   );
   self.clients.claim();
 });
@@ -37,38 +36,23 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const requestUrl = new URL(event.request.url);
 
-  // Always let external live-data requests go straight to the network.
-  // The data-fetcher handles its own retry/fallback logic.
+  // Always bypass cache for external live-data sources.
   if (BYPASS_ORIGINS.some((origin) => requestUrl.hostname === origin)) {
-    return; // no respondWith — browser fetches normally
-  }
-
-  const isDataFeed = requestUrl.pathname.endsWith(".json") && requestUrl.pathname.includes("/data/");
-
-  if (isDataFeed) {
-    // Static fallback JSON: network-first, cache on success, serve cache offline
-    event.respondWith(
-      fetch(event.request)
-        .then((response) => {
-          if (response.ok) {
-            const copy = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
-          }
-          return response;
-        })
-        .catch(() => caches.match(event.request))
-    );
     return;
   }
 
-  // App shell: cache-first
+  // Network-first for everything: HTML, JS, CSS, JSON data.
+  // Falls back to cache only when offline.
+  // This ensures users always get the latest version on page load.
   event.respondWith(
-    caches.match(event.request).then((cached) => cached || fetch(event.request).then((response) => {
-      if (event.request.method === "GET" && response.ok) {
-        const copy = response.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
-      }
-      return response;
-    }))
+    fetch(event.request)
+      .then((response) => {
+        if (event.request.method === "GET" && response.ok) {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+        }
+        return response;
+      })
+      .catch(() => caches.match(event.request))
   );
 });
