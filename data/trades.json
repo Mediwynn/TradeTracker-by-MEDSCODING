@@ -28112,22 +28112,6 @@
     "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20032248.pdf"
   },
   {
-    "official": "Gilbert Cisneros",
-    "party": "Unknown",
-    "state": "CA",
-    "employment": "current",
-    "ticker": "UNCFF",
-    "asset": "UNICREDITO SPA ORD NEW",
-    "type": "Purchase",
-    "range": "$1,001 - $15,000",
-    "amount": 8000,
-    "transactionDate": "2025-09-18",
-    "disclosureDate": "10/08/2025",
-    "status": "Verified",
-    "initials": "GC",
-    "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20032248.pdf"
-  },
-  {
     "official": "Josh Gottheimer",
     "party": "Unknown",
     "state": "NJ",
@@ -29066,22 +29050,6 @@
     "range": "$15,001 - $50,000",
     "amount": 32500,
     "transactionDate": "2025-09-19",
-    "disclosureDate": "10/01/2025",
-    "status": "Verified",
-    "initials": "AM",
-    "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20032233.pdf"
-  },
-  {
-    "official": "April McClain Delaney",
-    "party": "Unknown",
-    "state": "MD",
-    "employment": "current",
-    "ticker": "STE",
-    "asset": "STERIS plc",
-    "type": "Purchase",
-    "range": "$1,001 - $15,000",
-    "amount": 8000,
-    "transactionDate": "2025-09-18",
     "disclosureDate": "10/01/2025",
     "status": "Verified",
     "initials": "AM",
@@ -30766,37 +30734,5 @@
     "status": "Verified",
     "initials": "CF",
     "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20032106.pdf"
-  },
-  {
-    "official": "Cleo Fields",
-    "party": "Unknown",
-    "state": "LA",
-    "employment": "current",
-    "ticker": "ORCL",
-    "asset": "Oracle Corporation Common Stock",
-    "type": "Purchase",
-    "range": "$15,001 - $50,000",
-    "amount": 32500,
-    "transactionDate": "2025-09-18",
-    "disclosureDate": "09/18/2025",
-    "status": "Verified",
-    "initials": "CF",
-    "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20032106.pdf"
-  },
-  {
-    "official": "Michael Rulli",
-    "party": "Unknown",
-    "state": "OH",
-    "employment": "current",
-    "ticker": "META",
-    "asset": "Meta Platforms, Inc. - Class A Common Stock",
-    "type": "Purchase",
-    "range": "$1,001 - $15,000",
-    "amount": 8000,
-    "transactionDate": "2025-09-18",
-    "disclosureDate": "09/18/2025",
-    "status": "Verified",
-    "initials": "MR",
-    "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/20035147.pdf"
   }
 ]
