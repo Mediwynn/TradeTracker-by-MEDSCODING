@@ -28382,21 +28382,5 @@
     "status": "Verified",
     "initials": "DW",
     "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20032087.pdf"
-  },
-  {
-    "official": "Kevin Hern",
-    "party": "Unknown",
-    "state": "OK",
-    "employment": "current",
-    "ticker": "MASI",
-    "asset": "Masimo Corporation - Common Stock",
-    "type": "Sale",
-    "range": "$15,001",
-    "amount": 15001,
-    "transactionDate": "2025-09-26",
-    "disclosureDate": "09/29/2025",
-    "status": "Verified",
-    "initials": "KH",
-    "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20032284.pdf"
   }
 ]
