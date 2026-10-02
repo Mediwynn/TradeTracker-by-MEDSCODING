@@ -24160,22 +24160,6 @@
     "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20033408.pdf"
   },
   {
-    "official": "April McClain Delaney",
-    "party": "Unknown",
-    "state": "MD",
-    "employment": "current",
-    "ticker": "PAYX",
-    "asset": "Paychex, Inc. - Common Stock",
-    "type": "Purchase",
-    "range": "$1,001 - $15,000",
-    "amount": 8000,
-    "transactionDate": "2025-10-01",
-    "disclosureDate": "11/01/2025",
-    "status": "Verified",
-    "initials": "AM",
-    "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20033408.pdf"
-  },
-  {
     "official": "Byron Donalds",
     "party": "Unknown",
     "state": "FL",
@@ -27998,38 +27982,6 @@
     "status": "Verified",
     "initials": "LM",
     "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20033446.pdf"
-  },
-  {
-    "official": "Julia Letlow",
-    "party": "Unknown",
-    "state": "LA",
-    "employment": "current",
-    "ticker": "AMZN",
-    "asset": "Amazon.com, Inc. - Common Stock",
-    "type": "Purchase",
-    "range": "$1,001 - $15,000",
-    "amount": 8000,
-    "transactionDate": "2025-10-01",
-    "disclosureDate": "11/01/2025",
-    "status": "Verified",
-    "initials": "JL",
-    "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/20030977.pdf"
-  },
-  {
-    "official": "Julia Letlow",
-    "party": "Unknown",
-    "state": "LA",
-    "employment": "current",
-    "ticker": "INTU",
-    "asset": "Intuit Inc. - Common Stock",
-    "type": "Purchase",
-    "range": "$1,001 - $15,000",
-    "amount": 8000,
-    "transactionDate": "2025-10-01",
-    "disclosureDate": "11/01/2025",
-    "status": "Verified",
-    "initials": "JL",
-    "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/20030977.pdf"
   },
   {
     "official": "Julia Letlow",
