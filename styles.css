@@ -69,7 +69,7 @@ h1 { font-size: clamp(38px, 5vw, 60px); letter-spacing: -.065em; line-height: .9
 .select-wrap select { appearance: none; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 9 9'%3E%3Cpath d='m1 3 3.5 3L8 3' fill='none' stroke='%2373817d'/%3E%3C/svg%3E") no-repeat right 10px center; border: 1px solid var(--line); border-radius: 4px; color: var(--muted); cursor: pointer; font-size: 10px; min-width: 119px; padding: 10px 25px 10px 10px; }
 .filter-button { font-size: 10px; padding: 0 4px; }
 .filter-button:hover, .text-button:hover, .more-button:hover { color: var(--green); }
-.table-wrap { overflow-x: auto; }
+.table-wrap { contain: layout; overflow-x: auto; }
 table { border-collapse: collapse; min-width: 715px; width: 100%; }
 th { color: var(--muted); font: 500 9px "DM Mono", monospace; letter-spacing: .02em; padding: 14px 12px 10px; text-align: left; text-transform: uppercase; white-space: nowrap; }
 th:first-child, td:first-child { padding-left: 25px; }
@@ -160,6 +160,40 @@ td { border-top: 1px solid #edf1ef; font-size: 11px; padding: 14px 12px; white-s
 .news-disclaimer { color: var(--muted); font-size: 10px; line-height: 1.5; margin: 22px 0 0; }
 .dark-mode .back-link, .dark-mode .news-detail-summary { color: #8ed0ff; }
 .dark-mode .news-item:hover, .dark-mode .news-item:focus-visible { background: #101d31; }
+
+html, body { max-width: 100%; min-width: 0; }
+.app-shell, .page, .news-list-page, .news-detail-page { min-width: 0; width: 100%; }
+.portrait-summary { max-width: 100%; }
+.content-grid > *, .side-column, .signal-grid > *, .analytics-grid > * { min-width: 0; }
+img, svg, canvas { max-width: 100%; }
+
+@media (max-width: 900px) {
+  .toolbar { flex-wrap: wrap; }
+  .toolbar .search-box { flex: 1 1 240px; min-width: 0; }
+  .toolbar .select-wrap { min-width: 0; }
+  .toolbar .select-wrap select { max-width: 100%; min-width: 0; }
+  .analytics-heading { flex-wrap: wrap; gap: 12px; }
+  .methodology { flex-wrap: wrap; }
+  .methodology a { margin-left: 0; white-space: normal; }
+}
+
+@media (max-width: 620px) {
+  .page { padding-left: clamp(12px, 4vw, 18px); padding-right: clamp(12px, 4vw, 18px); }
+  .topbar { min-width: 0; padding-left: clamp(12px, 4vw, 18px); padding-right: clamp(12px, 4vw, 18px); }
+  .brand { min-width: 0; }
+  .brand-name { font-size: clamp(14px, 4.5vw, 19px); }
+  .topbar-actions { flex-shrink: 0; gap: clamp(8px, 2.5vw, 18px); }
+  .hero h1 { font-size: clamp(30px, 10vw, 42px); }
+  .hero-copy { font-size: clamp(12px, 3.7vw, 14px); }
+  .metric-card { min-width: 0; padding: 16px clamp(10px, 3.5vw, 14px); }
+  .metric-card strong { font-size: clamp(16px, 5.3vw, 20px); }
+  .panel-heading h2 { font-size: clamp(16px, 5vw, 20px); }
+  .panel-heading { gap: 10px; }
+  .table-footer { flex-wrap: wrap; gap: 12px; }
+  .portrait-summary { gap: clamp(10px, 4vw, 28px); }
+  .news-list-page, .news-detail-page { padding-left: clamp(12px, 4vw, 14px); padding-right: clamp(12px, 4vw, 14px); }
+  .news-detail-card { padding: clamp(16px, 5vw, 22px); }
+}
 @media (max-width: 600px) {
   .news-list-page { padding: 22px 14px; }
   .news-controls { align-items: stretch; flex-direction: column; padding: 0 15px 15px; }
