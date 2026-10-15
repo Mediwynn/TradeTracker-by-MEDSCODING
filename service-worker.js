@@ -1,14 +1,21 @@
-const CACHE_NAME = "tradetracker-v9";
+const CACHE_NAME = "tradetracker-v13";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./styles.css",
   "./app.js",
+  "./guest-mode.js",
+  "./auth-state.js",
+  "./auth.js",
+  "./auth-config.js",
   "./data-fetcher.js",
+  "./data/trades.json",
+  "./data/news.json",
+  "./data/metadata.json",
   "./news.html",
-  "./news-detail.js",
+  "./news-detail.js?v=4",
   "./news-list.html",
-  "./news-list.js?v=5",
+  "./news-list.js?v=7",
   "./manifest.webmanifest",
   "./app-icon.svg"
 ];
@@ -21,6 +28,7 @@ const BYPASS_ORIGINS = [
   "news.google.com",
   "www.sec.gov",
   "www.whitehouse.gov",
+  "esm.sh",
 ];
 
 self.addEventListener("install", (event) => {
@@ -39,7 +47,10 @@ self.addEventListener("fetch", (event) => {
   const requestUrl = new URL(event.request.url);
 
   // Always bypass cache for external live-data sources.
-  if (BYPASS_ORIGINS.some((origin) => requestUrl.hostname === origin)) {
+  if (
+    BYPASS_ORIGINS.some((origin) => requestUrl.hostname === origin) ||
+    requestUrl.hostname.endsWith(".supabase.co")
+  ) {
     return;
   }
 

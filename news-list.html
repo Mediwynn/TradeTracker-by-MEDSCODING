@@ -28,6 +28,12 @@
 
       <a class="back-link" href="index.html#news">← Back to TradeTracker</a>
 
+      <aside class="guest-mode-banner hidden" id="guest-mode-banner" role="status">
+        <span data-guest-copy></span>
+        <button class="guest-exit-button" type="button" data-exit-guest>Exit guest mode</button>
+        <a class="guest-exit-button hidden" href="index.html?auth=signin" data-signin-link>Sign in for current data</a>
+      </aside>
+
       <section class="panel news-browser">
 
         <div class="panel-heading">
@@ -121,9 +127,10 @@
       </section>
 
     </main>
+    <script src="auth-config.js"></script>
+    <script src="guest-mode.js"></script>
     <script src="data-fetcher.js"></script>
-    <script src="news-list.js?v=5"></script>
+    <script src="news-list.js?v=7"></script>
   </body>
 
 </html>
-

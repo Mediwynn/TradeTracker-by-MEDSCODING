@@ -31,11 +31,16 @@
         <div class="topbar-actions">
           <span class="live-status"><i></i> Loading data...</span>
           <button class="icon-button" id="theme-toggle" aria-label="Switch to dark mode">☾</button>
-          <div class="avatar">AR</div>
+          <button class="avatar account-button" id="account-button" type="button" aria-label="Open account" aria-haspopup="dialog">Account</button>
         </div>
       </header>
 
       <main id="dashboard" class="page">
+        <aside class="guest-mode-banner hidden" id="guest-mode-banner" role="status">
+          <span data-guest-copy></span>
+          <button class="guest-exit-button" type="button" data-exit-guest>Exit guest mode</button>
+          <a class="guest-exit-button hidden" href="index.html?auth=signin" data-signin-link>Sign in for current data</a>
+        </aside>
         <section class="hero">
           <div>
             <p class="eyebrow" id="hero-eyebrow">PUBLIC DISCLOSURES</p>
@@ -326,11 +331,55 @@
 
     <div class="analytics-tooltip" id="analytics-tooltip" role="status"></div>
     <div class="toast" id="toast" role="status"></div>
+    <dialog class="account-dialog" id="account-dialog" aria-labelledby="account-title" aria-describedby="account-description">
+      <section class="account-card">
+        <button class="account-close" id="account-close" type="button" aria-label="Close account dialog">×</button>
+        <p class="eyebrow">TRADETRACKER ACCOUNT</p>
+        <h2 id="account-title">Sign in</h2>
+        <p class="account-description" id="account-description">Create an account or sign in. Email verification is required for new accounts.</p>
+        <form id="account-form" novalidate>
+          <label class="account-field" id="account-email-field">
+            <span>Email address</span>
+            <input id="account-email" name="email" type="email" autocomplete="email" required />
+          </label>
+          <label class="account-field" id="account-password-field">
+            <span>Password</span>
+            <input id="account-password" name="password" type="password" autocomplete="current-password" minlength="8" />
+          </label>
+          <label class="account-field hidden" id="account-confirm-field">
+            <span>Confirm password</span>
+            <input id="account-confirm-password" name="confirm-password" type="password" autocomplete="new-password" minlength="8" />
+          </label>
+          <p class="account-message" id="account-message" role="status" aria-live="polite"></p>
+          <button class="primary-button account-submit" id="account-submit" type="submit">Sign in</button>
+        </form>
+        <div class="account-actions" id="account-actions">
+          <button class="account-text-button" id="account-switch" type="button">Create an account</button>
+          <button class="account-text-button" id="account-forgot" type="button">Forgot password?</button>
+        </div>
+        <div class="account-actions hidden" id="account-pending-actions">
+          <button class="account-text-button" id="account-resend" type="button">Resend verification email</button>
+          <button class="account-text-button" id="account-back-signin" type="button">Back to sign in</button>
+        </div>
+        <div class="account-actions hidden" id="account-session-actions">
+          <button class="account-text-button" id="account-signout" type="button">Sign out</button>
+        </div>
+        <div class="account-guest-actions" id="account-guest-actions">
+          <button class="secondary-button" id="account-continue-guest" type="button">Continue as guest · limited cached data</button>
+          <button class="account-text-button hidden" id="account-exit-guest" type="button">Exit guest mode and load current data</button>
+          <p>Guest mode uses a small bundled snapshot that may be outdated. No account or login is required.</p>
+        </div>
+        <p class="account-footnote">TradeTracker remains public. Signed-out data is delayed by at least 150 days; signing in is optional.</p>
+      </section>
+    </dialog>
+    <script src="auth-config.js"></script>
+    <script src="guest-mode.js"></script>
     <script src="data-fetcher.js"></script>
     <script src="app.js"></script>
+    <script type="module" src="auth.js"></script>
     <script>
       if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => navigator.serviceWorker.register("service-worker.js?v=9"));
+        window.addEventListener("load", () => navigator.serviceWorker.register("service-worker.js?v=13"));
       }
     </script>
   </body>

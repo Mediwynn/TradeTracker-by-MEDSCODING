@@ -56,7 +56,7 @@ async function loadNews() {
 
   const { fetchNews } = window.TradeTrackerData;
 
-  const { news: liveNews, source, fetchedAt } = await fetchNews();
+  const { news: liveNews, source, fetchedAt, snapshotAt, access } = await fetchNews();
 
 
 
@@ -66,7 +66,7 @@ async function loadNews() {
 
   } else {
 
-    news = sampleNews;
+    news = window.TradeTrackerData.filterNewsByAccess(sampleNews, access);
 
   }
 
@@ -78,18 +78,25 @@ async function loadNews() {
 
   if (rangeEl && fetchedAt) {
 
-    const label = source === "live" ? "Live" : source === "cached" ? "Cached" : "Sample";
-
+    const label = source === "guest"
+      ? "Guest cached snapshot"
+      : access.delayed
+        ? "Delayed · 150 days"
+        : source === "live"
+          ? "Live"
+          : source === "cached"
+            ? "Cached"
+            : "Sample";
     const time = new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit" }).format(new Date(fetchedAt));
-
-    rangeEl.dataset.fetchStatus = `${label} · fetched ${time}`;
-
+    rangeEl.dataset.fetchStatus = source === "guest"
+      ? `${label} · snapshot ${snapshotAt ? formatDate(snapshotAt.slice(0, 10)) : "date unavailable"}`
+      : access.delayed
+        ? `${label} · through ${formatDate(access.latestDate)}`
+        : `${label} · fetched ${time}`;
   }
 
-
-
+  window.TradeTrackerGuest.renderGuestNotice(snapshotAt, access);
   renderNews();
-
 }
 
 

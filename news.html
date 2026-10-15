@@ -18,6 +18,12 @@
 
     <main class="news-detail-page">
 
+      <aside class="guest-mode-banner hidden" id="guest-mode-banner" role="status">
+        <span data-guest-copy></span>
+        <button class="guest-exit-button" type="button" data-exit-guest>Exit guest mode</button>
+        <a class="guest-exit-button hidden" href="index.html?auth=signin" data-signin-link>Sign in for current data</a>
+      </aside>
+
       <article class="panel news-detail-card">
 
         <span class="news-source" id="news-source"></span>
@@ -37,9 +43,10 @@
       </article>
 
     </main>
+    <script src="auth-config.js"></script>
+    <script src="guest-mode.js"></script>
     <script src="data-fetcher.js"></script>
-    <script src="news-detail.js?v=2"></script>
+    <script src="news-detail.js?v=4"></script>
   </body>
 
 </html>
-

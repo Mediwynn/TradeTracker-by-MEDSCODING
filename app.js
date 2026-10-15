@@ -38,7 +38,7 @@ let tradePage = 1;
 async function loadTrades() {
   lastFetchTime = Date.now();
   const { fetchTrades } = window.TradeTrackerData;
-  const { trades: liveTrades, source, fetchedAt } = await fetchTrades();
+  const { trades: liveTrades, source, fetchedAt, snapshotAt, access } = await fetchTrades();
 
   if (liveTrades !== null) {
     trades = liveTrades;
@@ -46,14 +46,24 @@ async function loadTrades() {
       notify("Showing cached trade data — live source temporarily unavailable.");
     }
   } else {
-    trades = sampleTrades;
-    notify("Live trade data is unavailable; showing the bundled sample.");
+    trades = window.TradeTrackerData.filterTradesByAccess(sampleTrades, access);
+    notify(access.delayed
+      ? "Trade data is unavailable; no recent sample data is shown to signed-out users."
+      : "Live trade data is unavailable; showing the bundled sample.");
   }
 
   // Update the topbar status indicator
   const liveStatus = document.querySelector(".live-status");
   if (liveStatus && fetchedAt) {
-    const label = source === "live" ? "Live" : source === "cached" ? "Cached" : "Sample";
+    const label = source === "guest"
+      ? "Guest · cached snapshot"
+      : access.delayed
+        ? "Delayed · 150 days"
+        : source === "live"
+          ? "Live"
+          : source === "cached"
+            ? "Cached"
+            : "Sample";
     const fetchTime = new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit" }).format(new Date(fetchedAt));
     // Find most recent valid transaction date
     const today = new Date().toISOString().slice(0, 10);
@@ -65,9 +75,10 @@ async function loadTrades() {
     const dataAsOf = latestDate
       ? new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(new Date(latestDate + "T12:00:00"))
       : "—";
-    liveStatus.innerHTML = `<i></i> Checked ${fetchTime}<span class="live-status-date">Latest trade: ${dataAsOf}</span>`;
+    liveStatus.innerHTML = `<i></i> ${source === "guest" ? "Snapshot loaded" : `Checked ${fetchTime}`}<span class="live-status-date">Latest trade: ${dataAsOf}</span>`;
   }
 
+  window.TradeTrackerGuest.renderGuestNotice(snapshotAt, access);
   updateDashboard();
   render();
   renderRiskAndDeals();
@@ -586,10 +597,10 @@ loadTrades();
 const REFRESH_MS = 2 * 60 * 60 * 1000;
 
 setInterval(() => {
-  if (!document.hidden) loadTrades();
+  if (!document.hidden && !window.TradeTrackerGuest.isGuestMode()) loadTrades();
 }, REFRESH_MS);
 
 // Also refresh when the user returns to the tab if 2+ hours have passed.
 document.addEventListener("visibilitychange", () => {
-  if (!document.hidden && Date.now() - lastFetchTime >= REFRESH_MS) loadTrades();
+  if (!document.hidden && !window.TradeTrackerGuest.isGuestMode() && Date.now() - lastFetchTime >= REFRESH_MS) loadTrades();
 });

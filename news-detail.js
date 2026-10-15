@@ -80,10 +80,27 @@ async function loadArticle() {
   const fallback = articles[articleId] || articles.defense;
   try {
     const { fetchNews } = window.TradeTrackerData;
-    const { news: liveNews } = await fetchNews();
+    const { news: liveNews, snapshotAt, access } = await fetchNews();
+    window.TradeTrackerGuest.renderGuestNotice(snapshotAt, access);
     const pool = liveNews || [];
     const liveArticle = pool.find((item) => item.id === articleId);
-    if (!liveArticle) return renderArticle(fallback);
+    if (!liveArticle) {
+      if (access.delayed) {
+        return renderArticle({
+          source: access.guest ? "GUEST SNAPSHOT" : "DELAYED PUBLIC ACCESS",
+          time: "STORY NOT AVAILABLE",
+          category: access.guest ? "Limited guest data" : "150-day publication delay",
+          title: access.guest
+            ? "This story is not included in the guest snapshot"
+            : "This story is newer than the signed-out data window",
+          summary: access.guest
+            ? "Guest access includes only a small selection of cached news stories."
+            : "Only stories published at least 150 days ago are available without signing in.",
+          details: "Sign in to view current public news feeds.",
+        });
+      }
+      return renderArticle(fallback);
+    }
     renderArticle({
       source: liveArticle.source || "PUBLIC NEWS",
       time: new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(new Date(liveArticle.date + "T12:00:00")),
@@ -95,6 +112,22 @@ async function loadArticle() {
     });
   } catch (error) {
     console.error("Unable to load the live news article.", error);
+    const access = await window.TradeTrackerData.getDataAccess();
+    window.TradeTrackerGuest.renderGuestNotice(null, access);
+    if (access.delayed) {
+      return renderArticle({
+        source: access.guest ? "GUEST SNAPSHOT" : "DELAYED PUBLIC ACCESS",
+        time: "STORY NOT AVAILABLE",
+        category: access.guest ? "Limited guest data" : "150-day publication delay",
+        title: access.guest
+          ? "This story is not included in the guest snapshot"
+          : "This story is newer than the signed-out data window",
+        summary: access.guest
+          ? "Guest access includes only a small selection of cached news stories."
+          : "Only stories published at least 150 days ago are available without signing in.",
+        details: "Sign in to view current public news feeds.",
+      });
+    }
     renderArticle(fallback);
   }
 }
