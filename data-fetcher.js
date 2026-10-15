@@ -12,12 +12,32 @@
 const TRADE_SOURCE =
   "https://raw.githubusercontent.com/TattooedHead/house-stock-watcher-data/main/data/all_transactions.json";
 
-const NEWS_RSS =
-  "https://news.google.com/rss/search?q=congressional+stock+trades+OR+government+official+financial+disclosure&hl=en-US&gl=US&ceid=US:en";
-// rss2json.com converts an RSS feed to JSON with CORS headers — fast and purpose-built
-const NEWS_PROXY_PRIMARY = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(NEWS_RSS)}`;
-// allorigins.win as secondary fallback — wraps response in { contents: "..." }
-const NEWS_PROXY_FALLBACK = `https://api.allorigins.win/get?url=${encodeURIComponent(NEWS_RSS)}`;
+const NEWS_FEEDS = [
+  {
+    id: "google-disclosures",
+    source: "PUBLIC NEWS",
+    url: "https://news.google.com/rss/search?q=congressional+stock+trades+OR+government+official+financial+disclosure&hl=en-US&gl=US&ceid=US:en",
+  },
+  {
+    id: "sec-releases",
+    source: "SEC",
+    url: "https://www.sec.gov/news/pressreleases.rss",
+  },
+  {
+    id: "white-house-news",
+    source: "WHITE HOUSE",
+    url: "https://www.whitehouse.gov/news/feed/",
+  },
+  {
+    id: "google-deals",
+    source: "PUBLIC NEWS",
+    url: "https://news.google.com/rss/search?q=%22trade+deal%22+OR+%22deal+talks%22+OR+%22merger+offer%22+OR+%22acquisition+offer%22+OR+%22potential+deal%22&hl=en-US&gl=US&ceid=US:en",
+  },
+];
+// rss2json.com converts RSS to JSON with CORS headers.
+const NEWS_PROXY_PRIMARY = "https://api.rss2json.com/v1/api.json?rss_url=";
+// allorigins.win wraps the original RSS XML in { contents: "..." }.
+const NEWS_PROXY_FALLBACK = "https://api.allorigins.win/get?url=";
 
 const DAYS = 365;
 
@@ -81,9 +101,9 @@ function categoryFor(text) {
   return "Markets";
 }
 
-function sourceFor(title) {
+function sourceFor(title, fallback) {
   const match = title.match(/ - ([^-]+)$/);
-  return match ? match[1].trim().toUpperCase() : "PUBLIC NEWS";
+  return match ? match[1].trim().toUpperCase() : fallback;
 }
 
 // ─── trades ─────────────────────────────────────────────────────────────────
@@ -164,81 +184,88 @@ function normaliseTrades(raw, cutoff) {
 // ─── news ────────────────────────────────────────────────────────────────────
 
 /**
- * Fetch and normalise news from the live RSS source via CORS proxy.
+ * Fetch and combine news from live RSS sources via CORS proxies.
  * Returns { news: [...], source: "live" | "cached" | "sample" }
  */
 async function fetchNews() {
   const cutoff = cutoffDate();
+  const feedResults = await Promise.all(NEWS_FEEDS.map(async (feed) => {
+    try {
+      return await fetchNewsFeed(feed, cutoff);
+    } catch (err) {
+      console.warn(`[TradeTracker] ${feed.id} feed unavailable.`, err.message);
+      return [];
+    }
+  }));
+  const uniqueNews = new Map();
+  feedResults.flat().forEach((item) => {
+    const key = item.originalUrl || `${item.date}:${item.title.toLowerCase()}`;
+    if (!uniqueNews.has(key)) uniqueNews.set(key, item);
+  });
+  const liveNews = [...uniqueNews.values()];
 
-  // 1a. Try rss2json.com — returns structured JSON directly, no XML parsing needed
-  try {
-    const res = await fetch(NEWS_PROXY_PRIMARY, { cache: "no-store" });
-    if (!res.ok) throw new Error(`rss2json returned ${res.status}`);
-    const json = await res.json();
-    if (json.status !== "ok" || !Array.isArray(json.items)) throw new Error("rss2json bad response");
-    const news = json.items
-      .map((item, index) => {
-        const date = new Date(item.pubDate);
-        if (Number.isNaN(date.getTime())) return null;
-        const iso = date.toISOString().slice(0, 10);
-        if (iso < cutoff) return null;
-        return {
-          id: `feed-${date.getTime()}-${index}`,
-          source: sourceFor(item.title),
-          date: iso,
-          category: categoryFor(`${item.title} ${item.description || ""}`),
-          relevance: Math.max(1, 100 - index),
-          title: item.title.replace(/ - [^-]+$/, "").trim(),
-          summary: escapeXml(item.description) || "Publicly available news related to government disclosures and markets.",
-          originalUrl: item.link,
-        };
-      })
-      .filter(Boolean);
-    if (news.length > 0) return { news, source: "live", fetchedAt: new Date().toISOString() };
-  } catch (err) {
-    console.warn("[TradeTracker] rss2json fetch failed, trying allorigins fallback.", err.message);
-  }
-
-  // 1b. Fallback CORS proxy — allorigins returns { contents: "<xml>..." }
-  try {
-    const res = await fetch(NEWS_PROXY_FALLBACK, { cache: "no-store" });
-    if (!res.ok) throw new Error(`Proxy returned ${res.status}`);
-    const { contents } = await res.json();
-    if (!contents) throw new Error("Proxy returned empty contents");
-    const news = normaliseNews(parseXmlItems(contents), cutoff);
-    if (news.length > 0) return { news, source: "live", fetchedAt: new Date().toISOString() };
-  } catch (err) {
-    console.warn("[TradeTracker] allorigins proxy failed, trying cache.", err.message);
-  }
-
-  // 2. Try static fallback in repo
+  // Supplement live feeds with previously gathered stories when available.
   try {
     const res = await fetch("data/news.json", { cache: "no-store" });
     if (!res.ok) throw new Error(`Cache returned ${res.status}`);
-    const news = await res.json();
-    return { news, source: "cached", fetchedAt: new Date().toISOString() };
+    const cachedNews = await res.json();
+    const combined = new Map();
+    [...liveNews, ...cachedNews].forEach((item) => {
+      const key = item.originalUrl || `${item.date}:${item.title.toLowerCase()}`;
+      if (!combined.has(key)) combined.set(key, item);
+    });
+    if (combined.size > 0) {
+      return {
+        news: [...combined.values()],
+        source: liveNews.length > 0 ? "live" : "cached",
+        fetchedAt: new Date().toISOString(),
+      };
+    }
   } catch (err) {
-    console.warn("[TradeTracker] Cached news file unavailable.", err.message);
+    if (liveNews.length === 0) {
+      console.warn("[TradeTracker] Cached news file unavailable.", err.message);
+    }
+  }
+  if (liveNews.length > 0) {
+    return { news: liveNews, source: "live", fetchedAt: new Date().toISOString() };
   }
 
   // 3. Caller provides sample data
   return { news: null, source: "sample", fetchedAt: new Date().toISOString() };
 }
 
-function normaliseNews(items, cutoff) {
+async function fetchNewsFeed(feed, cutoff) {
+  try {
+    const res = await fetch(`${NEWS_PROXY_PRIMARY}${encodeURIComponent(feed.url)}`, { cache: "no-store" });
+    if (!res.ok) throw new Error(`rss2json returned ${res.status}`);
+    const json = await res.json();
+    if (json.status !== "ok" || !Array.isArray(json.items)) throw new Error("rss2json bad response");
+    return normaliseNews(json.items, cutoff, feed.source, feed.id);
+  } catch (primaryError) {
+    console.warn(`[TradeTracker] rss2json failed for ${feed.id}; trying allorigins.`, primaryError.message);
+  }
+
+  const res = await fetch(`${NEWS_PROXY_FALLBACK}${encodeURIComponent(feed.url)}`, { cache: "no-store" });
+  if (!res.ok) throw new Error(`allorigins returned ${res.status}`);
+  const { contents } = await res.json();
+  if (!contents) throw new Error("allorigins returned empty contents");
+  return normaliseNews(parseXmlItems(contents), cutoff, feed.source, feed.id);
+}
+
+function normaliseNews(items, cutoff, fallbackSource, feedId) {
   return items
     .map((item, index) => {
       const date = new Date(item.pubDate);
       if (Number.isNaN(date.getTime())) return null;
       const iso = date.toISOString().slice(0, 10);
-      if (iso < cutoff) return null;
+      if (iso < cutoff || iso > new Date().toISOString().slice(0, 10)) return null;
       return {
-        id: `feed-${date.getTime()}-${index}`,
-        source: sourceFor(item.title),
+        id: `${feedId}-${date.getTime()}-${index}`,
+        source: sourceFor(item.title || "", fallbackSource),
         date: iso,
-        category: categoryFor(`${item.title} ${item.description}`),
+        category: categoryFor(`${item.title || ""} ${item.description || ""}`),
         relevance: Math.max(1, 100 - index),
-        title: item.title.replace(/ - [^-]+$/, "").trim(),
+        title: (item.title || "").replace(/ - [^-]+$/, "").trim(),
         summary:
           item.description ||
           "Publicly available news related to government disclosures and markets.",

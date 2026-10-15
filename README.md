@@ -4,8 +4,9 @@ TradeTracker is a browser-based app for exploring publicly disclosed government 
 
 ## Features
 
-- Live trade data fetched directly from public disclosure sources on every load
-- Live news feed via Google News RSS (congressional and market context)
+- Live trade data fetched from the House Stock Watcher public disclosure dataset
+- News and deal-watch context from Google News RSS, SEC press releases, and White House announcements
+- Disclosure-based risk indicators and a clearly labeled, unverified deal-report watch
 - Search, filter, and sort trade disclosures
 - Current and former official filtering
 - Amount and transaction-time sorting
@@ -30,9 +31,11 @@ https://mediwynn.github.io/TradeTracker-by-MEDSCODING/
 
 ## Data sources
 
-- **Trades** — [House Stock Watcher](https://github.com/TattooedHead/house-stock-watcher-data) public disclosure dataset, covering the last 365 days
-- **News** — Google News RSS, filtered for congressional and government financial disclosure topics
+- **Trades** — [House Stock Watcher](https://github.com/TattooedHead/house-stock-watcher-data) dataset, covering the last 365 days. Verify filings at the [U.S. House Clerk disclosure portal](https://disclosures-clerk.house.gov/FinancialDisclosure). The [U.S. Senate eFD portal](https://efdsearch.senate.gov/search/) is linked as an additional primary reference, but Senate filings are not currently imported into the dashboard.
+- **News** — Google News RSS for public-disclosure context and potential/pending deal reports, plus official [SEC press releases](https://www.sec.gov/news/pressreleases.rss) and [White House announcements](https://www.whitehouse.gov/news/feed/). Article links lead to their publishers when available.
 - **Fallback** — Static JSON files in `data/` are refreshed daily by a GitHub Actions workflow and served as a backup if live sources are temporarily unavailable
+
+Risk indicators describe concentration and reporting/data-quality characteristics of the loaded disclosures; they are not market-risk scores. Deal-watch headlines are leads only, labeled unverified, and must be checked against the original source.
 
 ## Disclaimer
 

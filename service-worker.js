@@ -1,4 +1,4 @@
-const CACHE_NAME = "tradetracker-v8";
+const CACHE_NAME = "tradetracker-v9";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -19,6 +19,8 @@ const BYPASS_ORIGINS = [
   "api.allorigins.win",
   "api.rss2json.com",
   "news.google.com",
+  "www.sec.gov",
+  "www.whitehouse.gov",
 ];
 
 self.addEventListener("install", (event) => {

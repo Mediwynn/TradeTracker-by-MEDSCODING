@@ -70,6 +70,175 @@ async function loadTrades() {
 
   updateDashboard();
   render();
+  renderRiskAndDeals();
+}
+
+function riskCard(title, value, detail, level) {
+  const label = level === "high" ? "Higher" : level === "moderate" ? "Moderate" : level === "low" ? "Lower" : "Limited data";
+  const card = document.createElement("article");
+  card.className = "risk-card";
+  const heading = document.createElement("div");
+  heading.className = "risk-card-heading";
+  const headingTitle = document.createElement("h3");
+  headingTitle.textContent = title;
+  const badge = document.createElement("span");
+  badge.className = `risk-label ${level || "unknown"}`;
+  badge.textContent = label;
+  heading.append(headingTitle, badge);
+  const metric = document.createElement("strong");
+  metric.textContent = value;
+  const description = document.createElement("p");
+  description.textContent = detail;
+  card.append(heading, metric, description);
+  return card;
+}
+
+function parsedDate(value) {
+  if (!value) return null;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function riskLevel(value, moderateAt, highAt) {
+  if (value === null) return "unknown";
+  return value >= highAt ? "high" : value >= moderateAt ? "moderate" : "low";
+}
+
+async function renderRiskAndDeals() {
+  const riskMetrics = document.querySelector("#risk-metrics");
+  const tradeCount = trades.length;
+  const assetCounts = new Map();
+  trades.forEach((trade) => {
+    const asset = String(trade.ticker || "").trim();
+    if (asset && asset !== "—") assetCounts.set(asset, (assetCounts.get(asset) || 0) + 1);
+  });
+  const topAssetCount = Math.max(0, ...assetCounts.values());
+  const concentration = tradeCount ? Math.round((topAssetCount / tradeCount) * 100) : null;
+
+  const delays = trades.map((trade) => {
+    const transactionDate = parsedDate(trade.transactionDate);
+    const disclosureDate = parsedDate(trade.disclosureDate);
+    if (!transactionDate || !disclosureDate) return null;
+    const days = Math.floor((disclosureDate - transactionDate) / 86400000);
+    return days >= 0 ? days : null;
+  }).filter((days) => days !== null).sort((a, b) => a - b);
+  const medianDelay = delays.length
+    ? delays[Math.floor(delays.length / 2)]
+    : null;
+  const identifiedAssets = trades.filter((trade) => trade.ticker && trade.ticker !== "—").length;
+  const missingAssetShare = tradeCount
+    ? Math.round(((tradeCount - identifiedAssets) / tradeCount) * 100)
+    : null;
+  const topAsset = [...assetCounts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0];
+
+  riskMetrics.replaceChildren(
+    riskCard(
+      "Trade-count concentration",
+      concentration === null ? "No records" : `${concentration}%`,
+      topAsset ? `${topAssetCount} of ${tradeCount} loaded records reference ${topAsset}.` : "No asset concentration can be calculated yet.",
+      riskLevel(concentration, 25, 40)
+    ),
+    riskCard(
+      "Median reporting lag",
+      medianDelay === null ? "Not available" : `${medianDelay} days`,
+      delays.length ? `Calculated from ${delays.length} records with both transaction and filing dates.` : "Filing and transaction dates are not available together.",
+      riskLevel(medianDelay, 30, 60)
+    ),
+    riskCard(
+      "Asset identification gap",
+      missingAssetShare === null ? "No records" : `${missingAssetShare}%`,
+      tradeCount ? `${tradeCount - identifiedAssets} of ${tradeCount} records lack a ticker or asset identifier.` : "No loaded records to assess.",
+      riskLevel(missingAssetShare, 10, 25)
+    )
+  );
+
+  const dealContainer = document.querySelector("#deal-watch-list");
+  dealContainer.replaceChildren();
+  try {
+    const { news } = await window.TradeTrackerData.fetchNews();
+    renderNewsPreview(news || []);
+    const dealPattern = /\b(trade deal|trade agreement|deal talks|merger|acquisition|takeover|buyout|offer|rumou?r|potential deal|pending deal)\b/i;
+    const deals = (news || [])
+      .filter((item) => dealPattern.test(`${item.title} ${item.summary}`))
+      .sort((a, b) => b.date.localeCompare(a.date))
+      .slice(0, 5);
+
+    if (deals.length === 0) {
+      const emptyMessage = document.createElement("p");
+      emptyMessage.className = "deal-empty";
+      emptyMessage.textContent = "No recent deal-related reports matched the monitored feeds.";
+      dealContainer.append(emptyMessage);
+      return;
+    }
+
+    deals.forEach((item) => {
+      const story = document.createElement("article");
+      story.className = "deal-item";
+      const heading = document.createElement("div");
+      heading.className = "deal-meta";
+      const source = document.createElement("span");
+      source.textContent = `${item.source} · ${item.date}`;
+      const status = document.createElement("span");
+      status.className = "deal-status";
+      status.textContent = "Unverified report";
+      heading.append(source, status);
+
+      const title = document.createElement("h3");
+      title.textContent = item.title;
+      const summary = document.createElement("p");
+      summary.textContent = item.summary;
+      story.append(heading, title, summary);
+      try {
+        const url = new URL(item.originalUrl);
+        if (url.protocol === "https:") {
+          const link = document.createElement("a");
+          link.href = url.href;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          link.setAttribute("aria-label", `Read original report: ${item.title}`);
+          link.append(story);
+          dealContainer.append(link);
+          return;
+        }
+      } catch {
+        // Keep the report text visible when a feed provides no valid article URL.
+      }
+      dealContainer.append(story);
+    });
+  } catch (error) {
+    console.error("[TradeTracker] Unable to load deal-watch news.", error);
+    const errorMessage = document.createElement("p");
+    errorMessage.className = "deal-empty";
+    errorMessage.textContent = "Deal reports are temporarily unavailable. Please check the source feeds directly.";
+    dealContainer.append(errorMessage);
+  }
+}
+
+function renderNewsPreview(news) {
+  const container = document.querySelector("#news-preview-list");
+  container.replaceChildren();
+  const stories = [...news].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 3);
+  if (stories.length === 0) {
+    const emptyMessage = document.createElement("p");
+    emptyMessage.className = "news-empty";
+    emptyMessage.textContent = "No current stories are available from the connected feeds.";
+    container.append(emptyMessage);
+    return;
+  }
+  stories.forEach((item) => {
+    const link = document.createElement("a");
+    link.className = "news-item";
+    link.href = `news.html?id=${encodeURIComponent(item.id)}`;
+    const source = document.createElement("span");
+    source.className = "news-source";
+    source.textContent = `${item.source} · ${item.date}`;
+    const title = document.createElement("h3");
+    title.textContent = item.title;
+    const category = document.createElement("p");
+    category.textContent = item.category;
+    link.append(source, title, category);
+    container.append(link);
+  });
 }
 
 // ─── Sector classifier (mirrors data-fetcher.js logic) ──────────────────────

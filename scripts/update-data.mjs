@@ -2,7 +2,20 @@ import { mkdir, writeFile } from "node:fs/promises";
 
 const DAYS = 365;
 const tradeSource = "https://raw.githubusercontent.com/TattooedHead/house-stock-watcher-data/main/data/all_transactions.json";
-const newsSource = "https://news.google.com/rss/search?q=congressional+stock+trades+OR+government+official+financial+disclosure&hl=en-US&gl=US&ceid=US:en";
+const newsFeeds = [
+  {
+    id: "google-disclosures",
+    source: "PUBLIC NEWS",
+    url: "https://news.google.com/rss/search?q=congressional+stock+trades+OR+government+official+financial+disclosure&hl=en-US&gl=US&ceid=US:en"
+  },
+  { id: "sec-releases", source: "SEC", url: "https://www.sec.gov/news/pressreleases.rss" },
+  { id: "white-house-news", source: "WHITE HOUSE", url: "https://www.whitehouse.gov/news/feed/" },
+  {
+    id: "google-deals",
+    source: "PUBLIC NEWS",
+    url: "https://news.google.com/rss/search?q=%22trade+deal%22+OR+%22deal+talks%22+OR+%22merger+offer%22+OR+%22acquisition+offer%22+OR+%22potential+deal%22&hl=en-US&gl=US&ceid=US:en"
+  }
+];
 
 function dateOnly(value) {
   const text = String(value || "");
@@ -35,9 +48,9 @@ function categoryFor(text) {
   return "Markets";
 }
 
-function sourceFor(title) {
+function sourceFor(title, fallback) {
   const match = title.match(/ - ([^-]+)$/);
-  return match ? match[1].trim().toUpperCase() : "PUBLIC NEWS";
+  return match ? match[1].trim().toUpperCase() : fallback;
 }
 
 function initials(name) {
@@ -46,9 +59,22 @@ function initials(name) {
 
 async function main() {
   const cutoff = cutoffDate();
-  const [tradeResponse, newsResponse] = await Promise.all([fetch(tradeSource), fetch(newsSource)]);
+  const [tradeResponse, feedResults] = await Promise.all([
+    fetch(tradeSource),
+    Promise.all(newsFeeds.map(async (feed) => {
+      try {
+        const response = await fetch(feed.url);
+        if (!response.ok) throw new Error(`Feed returned ${response.status}`);
+        return parseXmlItems(await response.text()).map((item, index) => ({ ...item, feed, index }));
+      } catch (error) {
+        console.warn(`[TradeTracker] ${feed.id} feed unavailable: ${error.message}`);
+        return [];
+      }
+    }))
+  ]);
   if (!tradeResponse.ok) throw new Error(`Trade source returned ${tradeResponse.status}`);
-  if (!newsResponse.ok) throw new Error(`News source returned ${newsResponse.status}`);
+  const rawNews = feedResults.flat();
+  if (rawNews.length === 0) throw new Error("All news feeds are unavailable or empty");
 
   const rawTrades = await tradeResponse.json();
   const trades = rawTrades.filter((item) => dateOnly(item.transaction_date || item.transactionDate) >= cutoff).map((item) => {
@@ -74,21 +100,26 @@ async function main() {
     };
   }).filter((item) => item.transactionDate);
 
-  const rawNews = parseXmlItems(await newsResponse.text());
-  const news = rawNews.map((item, index) => {
+  const newsByUrl = new Map();
+  rawNews.forEach((item) => {
     const date = new Date(item.pubDate);
-    if (Number.isNaN(date.getTime())) return null;
-    return {
-      id: `feed-${date.getTime()}-${index}`,
-      source: sourceFor(item.title),
-      date: date.toISOString().slice(0, 10),
+    if (Number.isNaN(date.getTime())) return;
+    const isoDate = date.toISOString().slice(0, 10);
+    if (isoDate < cutoff || isoDate > new Date().toISOString().slice(0, 10)) return;
+    const article = {
+      id: `${item.feed.id}-${date.getTime()}-${item.index}`,
+      source: sourceFor(item.title, item.feed.source),
+      date: isoDate,
       category: categoryFor(`${item.title} ${item.description}`),
-      relevance: Math.max(1, 100 - index),
+      relevance: Math.max(1, 100 - item.index),
       title: item.title.replace(/ - [^-]+$/, "").trim(),
       summary: item.description || "Publicly available news related to government disclosures and markets.",
       originalUrl: item.link
     };
-  }).filter((item) => item && item.date >= cutoff);
+    const key = article.originalUrl || `${article.date}:${article.title.toLowerCase()}`;
+    if (!newsByUrl.has(key)) newsByUrl.set(key, article);
+  });
+  const news = [...newsByUrl.values()];
 
   await mkdir("data", { recursive: true });
   await writeFile("data/trades.json", JSON.stringify(trades, null, 2));
@@ -100,7 +131,7 @@ async function main() {
     tradeCount: trades.length,
     newsCount: news.length,
     tradeSource,
-    newsSource
+    newsSources: newsFeeds.map((feed) => feed.url)
   }, null, 2));
   console.log(`Generated ${trades.length} trades and ${news.length} news stories covering ${cutoff} onward.`);
 }

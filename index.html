@@ -24,8 +24,9 @@
           <a href="#officials">Officials</a>
           <a href="#analytics">Analytics</a>
           <a href="#signals">Signals</a>
+          <a href="#risk-watch">Risk &amp; deals</a>
           <a href="#news">News</a>
-          <a href="#methodology">Methodology</a>
+          <a href="#sources">Sources</a>
         </nav>
         <div class="topbar-actions">
           <span class="live-status"><i></i> Loading data...</span>
@@ -104,6 +105,31 @@
               <p class="signal-summary">The latest tracked transaction is a sale and is still under review.</p>
               <details><summary>Why this signal?</summary><ul><li>Latest event is a reported sale</li><li>Disclosure status has not been fully verified</li><li>A single transaction cannot establish a trend</li></ul></details>
             </article>
+          </div>
+        </section>
+
+        <section class="risk-watch-section" id="risk-watch">
+          <div class="panel-heading risk-watch-heading">
+            <div>
+              <p class="eyebrow">DISCLOSURE-BASED CONTEXT</p>
+              <h2>Risk assessment &amp; deal watch</h2>
+            </div>
+            <span class="record-count">Screening indicators · not investment advice</span>
+          </div>
+          <p class="risk-watch-intro">Indicators summarize loaded disclosure counts and data quality, not holdings or security market risk, and do not imply misconduct. Flags use simple thresholds: concentration at 25%/40%, median reporting lag at 30/60 days, and missing asset identifiers at 10%/25%. Deal headlines are source-reported leads, not confirmed transactions.</p>
+          <div class="risk-metrics" id="risk-metrics" aria-live="polite"></div>
+          <div class="deal-watch">
+            <div class="deal-watch-heading">
+              <div>
+                <p class="eyebrow">POTENTIAL / PENDING</p>
+                <h3>Trade deals, offers &amp; rumors</h3>
+              </div>
+              <span class="record-count">Verify with the original source</span>
+            </div>
+            <p class="deal-watch-note">Reports mentioning negotiations, offers, or possible deals are included for monitoring. “Unverified report” means TradeTracker has not independently confirmed the claim.</p>
+            <div class="deal-watch-list" id="deal-watch-list" aria-live="polite">
+              <p class="deal-empty">Loading deal-related reports…</p>
+            </div>
           </div>
         </section>
 
@@ -188,22 +214,8 @@
                 </div>
                 <a class="more-button" id="news-see-all" href="news-list.html">See all →</a>
               </div>
-              <div class="news-list">
-                <a class="news-item" href="news.html?id=defense">
-                  <span class="news-source">REUTERS · 2H AGO</span>
-                  <h3>Defense names rally as committee advances new spending bill</h3>
-                  <p>Policy &amp; markets</p>
-                </a>
-                <a class="news-item" href="news.html?id=ethics">
-                  <span class="news-source">AP NEWS · 5H AGO</span>
-                  <h3>Senate ethics office updates financial disclosure guidance</h3>
-                  <p>Government</p>
-                </a>
-                <a class="news-item" href="news.html?id=chips">
-                  <span class="news-source">BLOOMBERG · 1D AGO</span>
-                  <h3>Chip stocks lead a week of renewed congressional trading</h3>
-                  <p>Markets</p>
-                </a>
+              <div class="news-list" id="news-preview-list" aria-live="polite">
+                <p class="news-empty">Loading stories from the connected feeds…</p>
               </div>
             </section>
             <section class="panel watchlist-panel">
@@ -282,10 +294,31 @@
           <p class="analytics-note">Analytics are calculated from the public disclosures currently loaded into the app. Live history will expand as new filings are ingested.</p>
         </section>
 
-        <section class="methodology" id="methodology">
-          <span class="method-icon">i</span>
-          <div><strong>How to read this data</strong><p>Records are sourced from official financial disclosures. Amounts are reported in ranges, not exact values. A disclosure does not imply wrongdoing or a recommendation to trade.</p></div>
-          <a href="#">Read our methodology →</a>
+        <section class="sources-section" id="sources">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">TRANSPARENT PROVENANCE</p>
+              <h2>Data sources &amp; methodology</h2>
+            </div>
+          </div>
+          <div class="source-groups">
+            <article class="source-group">
+              <h3>Trade disclosures</h3>
+              <a href="https://github.com/TattooedHead/house-stock-watcher-data" target="_blank" rel="noopener noreferrer">House Stock Watcher dataset <span>Live trade feed used by this dashboard ↗</span></a>
+              <a href="https://disclosures-clerk.house.gov/FinancialDisclosure" target="_blank" rel="noopener noreferrer">U.S. House Clerk disclosures <span>Primary House financial disclosure filings ↗</span></a>
+              <a href="https://efdsearch.senate.gov/search/" target="_blank" rel="noopener noreferrer">U.S. Senate eFD search <span>Primary Senate filings for cross-checking; not currently ingested ↗</span></a>
+            </article>
+            <article class="source-group">
+              <h3>News &amp; developing reports</h3>
+              <a href="https://news.google.com/rss/search?q=congressional+stock+trades+OR+government+official+financial+disclosure&hl=en-US&gl=US&ceid=US:en" target="_blank" rel="noopener noreferrer">Google News RSS <span>Disclosure, market context, and deal-watch queries ↗</span></a>
+              <a href="https://www.sec.gov/news/pressreleases.rss" target="_blank" rel="noopener noreferrer">U.S. Securities and Exchange Commission RSS <span>Official regulatory and market-policy releases ↗</span></a>
+              <a href="https://www.whitehouse.gov/news/feed/" target="_blank" rel="noopener noreferrer">The White House News RSS <span>Official policy announcements and trade-deal updates ↗</span></a>
+            </article>
+          </div>
+          <div class="methodology" id="methodology">
+            <span class="method-icon">i</span>
+            <div><strong>How to read this data</strong><p>Amounts are reported ranges, not exact values. The active dataset is based on House disclosures; the Senate portal is provided as a separate primary reference and its filings are not yet included. News and deal reports require verification at source. Nothing here is financial advice.</p></div>
+          </div>
         </section>
       </main>
       <footer><span>PUBLIC LEDGER</span><span>Independent · Transparent · Public data</span><span>© 2026 Public Ledger</span></footer>
@@ -297,7 +330,7 @@
     <script src="app.js"></script>
     <script>
       if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => navigator.serviceWorker.register("service-worker.js?v=8"));
+        window.addEventListener("load", () => navigator.serviceWorker.register("service-worker.js?v=9"));
       }
     </script>
   </body>
