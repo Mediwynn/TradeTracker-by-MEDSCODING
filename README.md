@@ -43,6 +43,8 @@ On `localhost` only, when Supabase is not configured, the account dialog offers 
 
 This hard-coded demo does not create or verify an account, does not contact an auth service, and does not unlock current data. It is disabled on non-local hosts and is not available if Supabase credentials are configured.
 
+For local manual testing only, you can also sign in with username `admin1234` and password `admin1234`. This temporary mock is restricted to localhost and the current browser tab; it is not a real account, does not grant administrator privileges, and must not be used on a deployed site.
+
 ### Administrator account
 
 Administrator accounts must be real Supabase users and sign in with an email address; `Admin1234` alone is not a supported login identifier. Create the user in the Supabase dashboard (Authentication → Users) with a unique, strong password. Do not use the requested short password `1234`.

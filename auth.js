@@ -1,4 +1,9 @@
-import { getAuthClient } from "./auth-state.js";
+import {
+  endLocalAdminTestSession,
+  getAuthClient,
+  hasLocalAdminTestSession,
+  startLocalAdminTestSession,
+} from "./auth-state.js";
 
 const dialog = document.querySelector("#account-dialog");
 const form = document.querySelector("#account-form");
@@ -22,6 +27,10 @@ const accountButton = document.querySelector("#account-button");
 const demoCredentials = {
   email: "demo@tradetracker.local",
   password: "TradeTrackerDemo2026!",
+};
+const localAdminTestCredentials = {
+  username: "admin1234",
+  password: "admin1234",
 };
 
 const modes = {
@@ -146,7 +155,7 @@ function setMode(modeName, { keepMessage = false } = {}) {
     const verified = Boolean(currentUser.email_confirmed_at || currentUser.confirmed_at);
     const admin = currentUser.app_metadata?.role === "admin";
     description.textContent = demoSession
-      ? `${currentUser.email} · local demo session only; not authenticated`
+      ? `${currentUser.email} · local test session only; no real authentication or administrator privileges`
       : `${currentUser.email} · ${verified ? "Email verified" : "Email not yet verified"}${admin ? " · administrator role" : ""}`;
   }
   if (modeName === "verificationPending" && verificationEmail) {
@@ -168,7 +177,7 @@ function openDialog() {
 
 function showDemoSignIn() {
   setMode("signIn");
-  description.textContent = `LOCAL DEMO ONLY — Email: ${demoCredentials.email} · Password: ${demoCredentials.password}. No account is created and no authentication occurs.`;
+  description.textContent = `LOCAL DEMO ONLY — Email: ${demoCredentials.email} · Password: ${demoCredentials.password}. Temporary local test: username ${localAdminTestCredentials.username} · password ${localAdminTestCredentials.password}. Neither creates an account or grants real administrator privileges.`;
 }
 
 function updateAccountButton(user) {
@@ -202,6 +211,22 @@ function clearAuthCallback() {
 async function submitAccountForm(event) {
   event.preventDefault();
   if (!client) {
+    const username = emailInput.value.trim().toLowerCase();
+    if (
+      demoEnabled &&
+      currentMode === "signIn" &&
+      username === localAdminTestCredentials.username &&
+      passwordInput.value === localAdminTestCredentials.password
+    ) {
+      try {
+        startLocalAdminTestSession();
+        sessionStorage.removeItem("trade-tracker-guest-mode");
+        window.location.reload();
+      } catch (error) {
+        showMessage(error.message, "error");
+      }
+      return;
+    }
     if (
       demoEnabled &&
       currentMode === "signIn" &&
@@ -333,6 +358,17 @@ async function resendVerification() {
 async function signOut() {
   if (!client) {
     if (demoSession) {
+      try {
+        if (hasLocalAdminTestSession()) {
+          endLocalAdminTestSession();
+          sessionStorage.removeItem("trade-tracker-guest-mode");
+          window.location.reload();
+          return;
+        }
+      } catch (error) {
+        showMessage(error.message, "error");
+        return;
+      }
       demoSession = false;
       currentUser = null;
       updateAccountButton(null);
@@ -427,8 +463,14 @@ if (config?.url && config?.anonKey) {
   }
 } else {
   demoEnabled = isLocalDevelopmentHost();
+  if (demoEnabled && hasLocalAdminTestSession()) {
+    demoSession = true;
+    currentUser = { email: "admin1234 (local test)", email_confirmed_at: "local-test" };
+    updateAccountButton(currentUser);
+  }
   if (demoEnabled) {
-    showDemoSignIn();
+    if (demoSession) setMode("account");
+    else showDemoSignIn();
   } else {
     setMode("unavailable");
   }
