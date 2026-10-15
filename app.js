@@ -55,15 +55,13 @@ async function loadTrades() {
   // Update the topbar status indicator
   const liveStatus = document.querySelector(".live-status");
   if (liveStatus && fetchedAt) {
-    const label = source === "guest"
-      ? "Guest · cached snapshot"
-      : access.delayed
-        ? "Delayed · 150 days"
-        : source === "live"
-          ? "Live"
-          : source === "cached"
-            ? "Cached"
-            : "Sample";
+    const accessLabel = access.localTest
+      ? "Local test · current data"
+      : access.authenticated
+        ? "Signed in · current data"
+        : source === "guest"
+          ? "Guest · 150-day delayed snapshot"
+          : "Signed out · 150-day delay";
     const fetchTime = new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit" }).format(new Date(fetchedAt));
     // Find most recent valid transaction date
     const today = new Date().toISOString().slice(0, 10);
@@ -75,7 +73,7 @@ async function loadTrades() {
     const dataAsOf = latestDate
       ? new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(new Date(latestDate + "T12:00:00"))
       : "—";
-    liveStatus.innerHTML = `<i></i> ${source === "guest" ? "Snapshot loaded" : `Checked ${fetchTime}`}<span class="live-status-date">Latest trade: ${dataAsOf}</span>`;
+    liveStatus.innerHTML = `<i></i> ${accessLabel}<span class="live-status-date">${source === "guest" ? "Snapshot generated" : `Checked ${fetchTime}`} · Latest trade: ${dataAsOf}</span>`;
   }
 
   window.TradeTrackerGuest.renderGuestNotice(snapshotAt, access);

@@ -68,15 +68,18 @@ function parseDisclosureDate(value) {
 
 async function getDataAccess() {
   let authenticated = false;
+  let localTest = false;
   try {
-    const { hasAuthenticatedSession } = await import("./auth-state.js");
+    const { hasAuthenticatedSession, hasLocalAdminTestSession } = await import("./auth-state.js");
     authenticated = await hasAuthenticatedSession();
+    localTest = hasLocalAdminTestSession();
   } catch (error) {
     console.error("[TradeTracker] Could not verify the account session; using delayed public data.", error);
   }
   const guest = window.TradeTrackerGuest.isGuestMode();
   return {
     authenticated,
+    localTest,
     guest,
     delayed: !authenticated,
     latestDate: authenticated ? new Date().toISOString().slice(0, 10) : dateDaysAgo(SIGNED_OUT_DELAY_DAYS),

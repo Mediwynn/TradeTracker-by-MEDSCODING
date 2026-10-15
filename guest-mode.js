@@ -34,10 +34,6 @@ function renderGuestNotice(snapshotAt, access = null) {
   if (!banner) return;
   const guest = isGuestMode();
   const delayed = access?.delayed ?? true;
-  if (!guest && !delayed) {
-    banner.classList.add("hidden");
-    return;
-  }
 
   const date = snapshotAt && !Number.isNaN(new Date(snapshotAt).getTime())
     ? new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeStyle: "short" }).format(new Date(snapshotAt))
@@ -45,13 +41,18 @@ function renderGuestNotice(snapshotAt, access = null) {
   const latestDate = access?.latestDate
     ? new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeZone: "UTC" }).format(new Date(`${access.latestDate}T00:00:00Z`))
     : "at least 150 days ago";
-  banner.querySelector("[data-guest-copy]").textContent = guest
-    ? `Guest mode shows up to 10 cached trade disclosures and 12 cached news stories published by ${latestDate}. Snapshot generated ${date}; information may be outdated.`
-    : `Signed-out data is delayed by at least 150 days; only records published on or before ${latestDate} are shown. Sign in to see current data.`;
+  banner.classList.toggle("access-current-banner", !delayed);
+  banner.querySelector("[data-guest-copy]").textContent = !delayed
+    ? access.localTest
+      ? "Local admin1234 test session · mock sign-in only, not a real account or administrator · current available data is enabled."
+      : "Signed-in mode · current available data is enabled."
+    : guest
+      ? `Guest mode shows up to 10 cached trade disclosures and 12 cached news stories published by ${latestDate}. Snapshot generated ${date}; information may be outdated.`
+      : `Signed-out data is delayed by at least 150 days; only records published on or before ${latestDate} are shown. Sign in to see current data.`;
   const exitButton = banner.querySelector("[data-exit-guest]");
   const signInLink = banner.querySelector("[data-signin-link]");
   exitButton.classList.toggle("hidden", !guest);
-  signInLink.classList.toggle("hidden", guest);
+  signInLink.classList.toggle("hidden", guest || !delayed);
   banner.classList.remove("hidden");
 }
 
