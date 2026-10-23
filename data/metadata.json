@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-10-22T10:13:29.883Z",
-  "coverageStart": "2025-10-22",
-  "coverageEnd": "2026-10-22",
-  "tradeCount": 1778,
-  "newsCount": 40,
+  "generatedAt": "2026-10-23T10:06:14.271Z",
+  "coverageStart": "2025-10-23",
+  "coverageEnd": "2026-10-23",
+  "tradeCount": 1775,
+  "newsCount": 38,
   "tradeSource": "https://raw.githubusercontent.com/TattooedHead/house-stock-watcher-data/main/data/all_transactions.json",
   "newsSource": "https://news.google.com/rss/search?q=congressional+stock+trades+OR+government+official+financial+disclosure&hl=en-US&gl=US&ceid=US:en"
 }
