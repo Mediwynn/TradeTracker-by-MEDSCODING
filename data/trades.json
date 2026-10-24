@@ -28350,53 +28350,5 @@
     "status": "Verified",
     "initials": "MR",
     "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/20035147.pdf"
-  },
-  {
-    "official": "Kevin Hern",
-    "party": "Unknown",
-    "state": "OK",
-    "employment": "current",
-    "ticker": "MCD",
-    "asset": "McDonald's Corporation Common Stock",
-    "type": "Sale",
-    "range": "$1,001 - $15,000",
-    "amount": 8000,
-    "transactionDate": "2025-10-23",
-    "disclosureDate": "10/24/2025",
-    "status": "Verified",
-    "initials": "KH",
-    "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20033458.pdf"
-  },
-  {
-    "official": "Cleo Fields",
-    "party": "Unknown",
-    "state": "LA",
-    "employment": "current",
-    "ticker": "AAPL",
-    "asset": "Apple Inc. - Common Stock",
-    "type": "Purchase",
-    "range": "$100,001 - $250,000",
-    "amount": 175000,
-    "transactionDate": "2025-10-23",
-    "disclosureDate": "10/23/2025",
-    "status": "Verified",
-    "initials": "CF",
-    "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20033424.pdf"
-  },
-  {
-    "official": "Cleo Fields",
-    "party": "Unknown",
-    "state": "LA",
-    "employment": "current",
-    "ticker": "TSM",
-    "asset": "Taiwan Semiconductor Manufacturing Company Ltd.",
-    "type": "Purchase",
-    "range": "$100,001 - $250,000",
-    "amount": 175000,
-    "transactionDate": "2025-10-23",
-    "disclosureDate": "10/23/2025",
-    "status": "Verified",
-    "initials": "CF",
-    "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20033424.pdf"
   }
 ]
