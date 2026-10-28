@@ -28174,53 +28174,5 @@
     "status": "Verified",
     "initials": "BG",
     "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20033476.pdf"
-  },
-  {
-    "official": "Peter Allen Stauber",
-    "party": "Unknown",
-    "state": "MN",
-    "employment": "current",
-    "ticker": "NWL",
-    "asset": "Newell Brands Inc.",
-    "type": "Purchase",
-    "range": "$15,001 - $50,000",
-    "amount": 32500,
-    "transactionDate": "2025-10-27",
-    "disclosureDate": "10/28/2025",
-    "status": "Verified",
-    "initials": "PA",
-    "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20033488.pdf"
-  },
-  {
-    "official": "James D Jordan",
-    "party": "Unknown",
-    "state": "OH",
-    "employment": "current",
-    "ticker": "CBSI",
-    "asset": "Central Bancshares, Inc. New",
-    "type": "Sale",
-    "range": "$50,001",
-    "amount": 50001,
-    "transactionDate": "2025-10-27",
-    "disclosureDate": "10/27/2025",
-    "status": "Verified",
-    "initials": "JD",
-    "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/20033803.pdf"
-  },
-  {
-    "official": "Michael Rulli",
-    "party": "Unknown",
-    "state": "OH",
-    "employment": "current",
-    "ticker": "AAPL",
-    "asset": "Apple Inc. - Common Stock",
-    "type": "Sale",
-    "range": "$1,001 - $15,000",
-    "amount": 8000,
-    "transactionDate": "2025-10-27",
-    "disclosureDate": "10/27/2025",
-    "status": "Verified",
-    "initials": "MR",
-    "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/20035147.pdf"
   }
 ]
