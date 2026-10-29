@@ -21872,22 +21872,6 @@
     "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/20033725.pdf"
   },
   {
-    "official": "Linda T. Sanchez",
-    "party": "Unknown",
-    "state": "CA",
-    "employment": "current",
-    "ticker": "CSCO",
-    "asset": "Cisco Systems, Inc. - Common Stock",
-    "type": "Sale",
-    "range": "$1,001 - $15,000",
-    "amount": 8000,
-    "transactionDate": "2025-10-28",
-    "disclosureDate": "12/27/2025",
-    "status": "Verified",
-    "initials": "LT",
-    "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/20033755.pdf"
-  },
-  {
     "official": "Cleo Fields",
     "party": "Unknown",
     "state": "LA",
@@ -28094,22 +28078,6 @@
     "status": "Verified",
     "initials": "DJ",
     "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20033395.pdf"
-  },
-  {
-    "official": "Scott DesJarlais",
-    "party": "Unknown",
-    "state": "TN",
-    "employment": "current",
-    "ticker": "UPS",
-    "asset": "United Parcel Service, Inc. Common Stock",
-    "type": "Sale",
-    "range": "$15,001 - $50,000",
-    "amount": 32500,
-    "transactionDate": "2025-10-28",
-    "disclosureDate": "10/30/2025",
-    "status": "Verified",
-    "initials": "SD",
-    "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20033490.pdf"
   },
   {
     "official": "Cleo Fields",
