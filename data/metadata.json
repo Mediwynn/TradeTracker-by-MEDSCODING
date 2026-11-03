@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-11-02T13:32:03.407Z",
-  "coverageStart": "2025-11-02",
-  "coverageEnd": "2026-11-02",
+  "generatedAt": "2026-11-03T12:49:24.965Z",
+  "coverageStart": "2025-11-03",
+  "coverageEnd": "2026-11-03",
   "tradeCount": 1545,
   "newsCount": 21,
   "tradeSource": "https://raw.githubusercontent.com/TattooedHead/house-stock-watcher-data/main/data/all_transactions.json",
