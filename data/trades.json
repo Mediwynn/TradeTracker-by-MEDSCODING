@@ -48,6 +48,22 @@
     "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/20035770.pdf"
   },
   {
+    "official": "John J Mr McGuire",
+    "party": "Unknown",
+    "state": "VA",
+    "employment": "current",
+    "ticker": "WDC",
+    "asset": "Western Digital Corporation - Common Stock F\u0000\u0000\u0000\u0000\u0000 S\u0000\u0000\u0000\u0000\u0000: New S\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000 O\u0000: Merrill Lynch SEP IRA",
+    "type": "Sale",
+    "range": "$1,001 - $15,000",
+    "amount": 8000,
+    "transactionDate": "2026-10-15",
+    "disclosureDate": "11/04/2026",
+    "status": "Verified",
+    "initials": "JJ",
+    "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/20035775.pdf"
+  },
+  {
     "official": "Maria Elvira Salazar",
     "party": "Unknown",
     "state": "FL",
@@ -1150,6 +1166,22 @@
     "status": "Verified",
     "initials": "CF",
     "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/20035669.pdf"
+  },
+  {
+    "official": "Nancy Pelosi",
+    "party": "Unknown",
+    "state": "CA",
+    "employment": "current",
+    "ticker": "WBD",
+    "asset": "Warner Bros. Discovery, Inc. - Series A Common Stock F\u0000\u0000\u0000\u0000\u0000 S\u0000\u0000\u0000\u0000\u0000: New D\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000: Cash proceeds from Warner Bros Discovery merger with Paramount Skydance.",
+    "type": "Sale",
+    "range": "$50,001 - $100,000",
+    "amount": 75000,
+    "transactionDate": "2026-10-07",
+    "disclosureDate": "10/07/2026",
+    "status": "Verified",
+    "initials": "NP",
+    "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/20035780.pdf"
   },
   {
     "official": "Josh Gottheimer",
