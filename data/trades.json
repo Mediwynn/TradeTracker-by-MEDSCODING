@@ -608,6 +608,22 @@
     "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/20035635.pdf"
   },
   {
+    "official": "David Kustoff",
+    "party": "Unknown",
+    "state": "TN",
+    "employment": "current",
+    "ticker": "WBD",
+    "asset": "Warner Bros. Discovery, Inc. - Series A Common Stock F\u0000\u0000\u0000\u0000\u0000 S\u0000\u0000\u0000\u0000\u0000: New S\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000 O\u0000: Fidelity Retail Account",
+    "type": "Sale",
+    "range": "$1,001 - $15,000",
+    "amount": 8000,
+    "transactionDate": "2026-10-07",
+    "disclosureDate": "10/12/2026",
+    "status": "Verified",
+    "initials": "DK",
+    "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/20024921.pdf"
+  },
+  {
     "official": "Gilbert Cisneros",
     "party": "Unknown",
     "state": "CA",
@@ -24272,38 +24288,6 @@
     "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20033553.pdf"
   },
   {
-    "official": "Jonathan Jackson",
-    "party": "Unknown",
-    "state": "IL",
-    "employment": "current",
-    "ticker": "META",
-    "asset": "Meta Platforms, Inc. - Class A Common Stock",
-    "type": "Sale",
-    "range": "$1,001 - $15,000",
-    "amount": 8000,
-    "transactionDate": "2025-11-11",
-    "disclosureDate": "12/01/2025",
-    "status": "Verified",
-    "initials": "JJ",
-    "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20033566.pdf"
-  },
-  {
-    "official": "Jonathan Jackson",
-    "party": "Unknown",
-    "state": "IL",
-    "employment": "current",
-    "ticker": "STT",
-    "asset": "State Street Corporation Common Stock",
-    "type": "Purchase",
-    "range": "$1,001 - $15,000",
-    "amount": 8000,
-    "transactionDate": "2025-11-11",
-    "disclosureDate": "12/01/2025",
-    "status": "Verified",
-    "initials": "JJ",
-    "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20033566.pdf"
-  },
-  {
     "official": "Tim Moore",
     "party": "Unknown",
     "state": "NC",
@@ -24398,22 +24382,6 @@
     "status": "Verified",
     "initials": "CF",
     "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20033559.pdf"
-  },
-  {
-    "official": "David J. Taylor",
-    "party": "Unknown",
-    "state": "OH",
-    "employment": "current",
-    "ticker": "RPM",
-    "asset": "RPM International Inc. Common Stock",
-    "type": "Purchase",
-    "range": "$1,001 - $15,000",
-    "amount": 8000,
-    "transactionDate": "2025-11-11",
-    "disclosureDate": "11/14/2025",
-    "status": "Verified",
-    "initials": "DJ",
-    "sourceUrl": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20033495.pdf"
   },
   {
     "official": "Marjorie Taylor Greene",
